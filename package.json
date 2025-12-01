@@ -11,7 +11,7 @@
   },
   "lint-staged": {
     "apps/**/*.{ts,tsx}": [
-      "eslint --fix"
+      "eslint --config apps/web/eslint.config.js --fix"
     ],
     "packages/**/*.{ts,tsx}": [
       "eslint --fix"
