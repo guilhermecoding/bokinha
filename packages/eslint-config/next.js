@@ -54,4 +54,15 @@ export const nextJsConfig = [
       "react/react-in-jsx-scope": "off",
     },
   },
+  {
+    // Regras de estilo para o monorepo / Next.js
+    rules: {
+      // Forçar aspas simples, permitindo template literals e evitando escape quando necessário
+      quotes: ["error", "single", { avoidEscape: true, allowTemplateLiterals: true }],
+      // Pontos e vírgulas obrigatórios
+      semi: ["error", "always"],
+      // Preferir template literals (backticks) ao concatenar strings
+      "prefer-template": "error",
+    },
+  },
 ];
