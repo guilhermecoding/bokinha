@@ -21,7 +21,7 @@ model User {
   @@map("users")
 }
 
-model Competition {
+model Contest {
   id            String     @id @default(cuid())
   name          String
   adminPassword String     @map("admin_password")
@@ -32,7 +32,7 @@ model Competition {
   questions     Question[]
   students      Student[]
 
-  @@map("competitions")
+  @@map("contests")
 }
 
 model Student {
@@ -40,22 +40,22 @@ model Student {
   fullName        String           @map("full_name")
   age             Int
   class           String
-  competitionId   String           @map("competition_id")
+  contestId       String           @map("contest_id")
   createdAt       DateTime         @default(now()) @map("created_at")
   solvedQuestions SolvedQuestion[]
-  competition     Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  Contest         Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
 
-  @@index([competitionId])
+  @@index([contestId])
   @@map("students")
 }
 
 model Question {
-  id            String           @id @default(cuid())
-  title         String
-  order         Int              @default(0)
-  competitionId String           @map("competition_id")
-  competition   Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  solvedBy      SolvedQuestion[]
+  id        String           @id @default(cuid())
+  title     String
+  order     Int              @default(0)
+  contestId String           @map("contest_id")
+  Contest   Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  solvedBy  SolvedQuestion[]
 
   @@map("questions")
 }
