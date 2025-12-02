@@ -13,6 +13,17 @@ const eslintConfig = defineConfig([
     "build/**",
     "next-env.d.ts",
   ]),
+
+  // Regras customizadas:
+  {
+    rules: {
+      // Ponto-e-vírgula obrigatório (regra core)
+      "semi": ["error", "always"],
+
+      // Aspas simples, mas permitir template literals (``) (regra core)
+      "quotes": ["error", "single", { "allowTemplateLiterals": true }]
+    },
+  },
 ]);
 
 export default eslintConfig;
