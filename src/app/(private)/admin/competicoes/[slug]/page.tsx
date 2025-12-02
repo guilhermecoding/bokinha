@@ -25,7 +25,7 @@ export default async function ContestPage({
   return (
     <Page>
       <Section className='flex flex-col lg:flex-row justify-between gap-5'>
-        <BoxContestInfo />
+        <BoxContestInfo contestId={contest.id} />
         <BoxStudentsInfo contestId={contest.id} />
       </Section>
     </Page>
