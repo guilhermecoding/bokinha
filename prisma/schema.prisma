@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Competition {
+  id            String     @id @default(cuid())
+  name          String
+  adminPassword String     @map("admin_password")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  questions     Question[]
+  students      Student[]
+}
+
+model Student {
+  id              String           @id @default(cuid())
+  fullName        String           @map("full_name")
+  age             Int
+  class           String
+  competitionId   String           @map("competition_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  solvedQuestions SolvedQuestion[]
+  competition     Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+}
+
+model Question {
+  id            String           @id @default(cuid())
+  title         String
+  order         Int              @default(0)
+  competitionId String           @map("competition_id")
+  competition   Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  solvedBy      SolvedQuestion[]
+}
+
+model SolvedQuestion {
+  id         String   @id @default(cuid())
+  solvedAt   DateTime @default(now()) @map("solved_at")
+  studentId  String   @map("student_id")
+  questionId String   @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, questionId])
+}
