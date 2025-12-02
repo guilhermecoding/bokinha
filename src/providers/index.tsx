@@ -1,3 +1,8 @@
+'use client';
+
+import AuthProvider from './auth-provider';
+import { TanStackProvider } from './tanstack-provider';
+
 /**
  * Gerenciamento de providers globais da aplicação.
  * @param children - componentes filhos a serem renderizados dentro dos providers
@@ -9,8 +14,10 @@ export default function Providers({
     children: React.ReactNode;
 }) {
     return (
-        <>
-            {children}
-        </>
+        <AuthProvider>
+            <TanStackProvider>
+                {children}
+            </TanStackProvider>
+        </AuthProvider>
     );
 }
