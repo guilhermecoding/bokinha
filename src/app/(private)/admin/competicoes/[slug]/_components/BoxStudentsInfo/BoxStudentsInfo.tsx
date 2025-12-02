@@ -53,7 +53,7 @@ function DialogAddStudent({ open, setOpen, defaultContestId }: {
       email: '',
       password: '',
       schoolClass: '',
-      age: undefined, // <-- usar undefined em vez de 0
+      age: undefined,
       contestId: defaultContestId ?? null,
     },
   });
@@ -64,7 +64,7 @@ function DialogAddStudent({ open, setOpen, defaultContestId }: {
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: [`students/${defaultContestId}`] });
       form.reset();
       setOpen(false);
     },
@@ -187,11 +187,13 @@ function DialogDeleteStudent({
   setOpen,
   studentId,
   studentName,
+  contestId,
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
   studentId: string | null;
   studentName?: string;
+  contestId?: string | null;
 }) {
   const queryClient = useQueryClient();
 
@@ -201,7 +203,7 @@ function DialogDeleteStudent({
       return data;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['students'] });
+      queryClient.invalidateQueries({ queryKey: [`students/${contestId}`] });
       setOpen(false);
     },
   });
@@ -238,7 +240,11 @@ function DialogDeleteStudent({
   );
 }
 
-export default function BoxStudentsInfo() {
+export default function BoxStudentsInfo({
+  contestId,
+}: {
+  contestId?: string | null;
+}) {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -247,9 +253,9 @@ export default function BoxStudentsInfo() {
   const { data, isLoading, isError } = useQuery<
     Omit<User, 'password' | 'role' | 'contestId' | 'createdAt' | 'updatedAt'>[]
   >({
-    queryKey: ['students'],
+    queryKey: [`students/${contestId}`],
     queryFn: async () => {
-      const res = await axios.get('/api/users/students');
+      const res = await axios.get(`/api/contests/${contestId}/students`);
       return res.data.students;
     },
     staleTime: 1000 * 60,
@@ -313,7 +319,7 @@ export default function BoxStudentsInfo() {
         )}
       </div>
 
-      <DialogAddStudent open={openAdd} setOpen={setOpenAdd} />
+      <DialogAddStudent open={openAdd} setOpen={setOpenAdd} defaultContestId={contestId} />
       <DialogDeleteStudent open={openDelete} setOpen={setOpenDelete} studentId={deleteId} studentName={deleteName} />
     </BoxContainer>
   );

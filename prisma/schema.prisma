@@ -24,18 +24,16 @@ model User {
   id       String @id @default(cuid())
   name     String
   email    String @unique
-  password String // Senha hash (bcrypt)
+  password String
   role     Role   @default(STUDENT)
 
-  // Campos específicos de Estudante (opcionais para Admin)
   schoolClass String? @map("school_class")
   age         Int?
 
-  // Relacionamento: Em qual competição este aluno está inscrito?
   contestId String?  @map("contest_id")
-  contest   Contest? @relation(fields: [contestId], references: [id])
+  // adiciona onDelete: Cascade para apagar users quando a contest for apagada
+  contest   Contest? @relation(fields: [contestId], references: [id], onDelete: Cascade)
 
-  // Histórico de acertos
   solvedQuestions SolvedQuestion[]
 
   createdAt DateTime @default(now()) @map("created_at")
