@@ -282,14 +282,14 @@ export default function BoxContest() {
         <>
             <div className='bg-white p-6 border border-muted-foreground rounded-md'>
                 {/* Header Section */}
-                <div className='flex flex-row justify-between'>
-                    <h2 className="font-bold text-3xl">Competições</h2>
+                <div className='flex flex-row justify-between items-center'>
+                    <h2 className="font-bold text-2xl sm:text-3xl">Competições</h2>
                     <Button 
                         variant="default" className='bg-purple-800 text-base p-6 hover:bg-purple-900 hover:cursor-pointer'
                         onClick={() => setOpen(true)}
                     >
                         <IconHexagonPlusFilled className="mr-2 h-5 w-5" />
-                        Criar Competição
+                        Criar
                     </Button>
                 </div>
 
@@ -306,14 +306,17 @@ export default function BoxContest() {
                                     <div className='flex justify-between items-center'>
                                         <div>
                                           <div className='font-medium'>{contest.name}</div>
-                                          <div className='text-sm text-muted-foreground'>Início: {new Date(contest.startTime).toLocaleString()}</div>
+                                          <div className='text-sm text-muted-foreground'>
+                                            Início: {new Date(contest.startTime).toLocaleString()} | 
+                                            Témino: {new Date(contest.endTime).toLocaleString()}
+                                            </div>
                                         </div>
 
                                         <div className="flex items-center gap-2">
                                             <Button
                                               variant='ghost'
                                               title="Visualizar"
-                                              onClick={() => router.push(`/admin/competicoes/${contest.id}`)} // navega para a rota desejada
+                                              onClick={() => router.push(`/admin/competicoes/${contest.slug}`)} // navega para a rota desejada
                                             >
                                                 <IconEyeFilled />
                                             </Button>

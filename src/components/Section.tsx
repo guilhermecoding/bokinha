@@ -10,7 +10,7 @@ interface SectionProps extends React.HTMLAttributes<HTMLElement> {
  * @returns 
  */
 export default function Section({ children, className, ...props }: SectionProps) {
-    return <section className={twMerge('w-4/5', className)} {...props}>
+    return <section className={twMerge('w-11/12 sm:w-4/5', className)} {...props}>
         {children}
     </section>;
 }
