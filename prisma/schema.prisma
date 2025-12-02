@@ -7,13 +7,33 @@ datasource db {
   provider = "postgresql"
 }
 
-model Competition {
+model User {
+  id              String           @id @default(cuid())
+  name            String?
+  email           String           @unique
+  password        String
+  role            Role             @default(STUDENT)
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  class           String?
+  solvedQuestions SolvedQuestion[]
+
+  @@map("users")
+}
+
+model Contest {
   id            String     @id @default(cuid())
   name          String
   adminPassword String     @map("admin_password")
+  slug          String     @unique
+  startTime     DateTime   @map("start_time")
+  endTime       DateTime   @map("end_time")
   createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
   questions     Question[]
   students      Student[]
+
+  @@map("contests")
 }
 
 model Student {
@@ -21,28 +41,42 @@ model Student {
   fullName        String           @map("full_name")
   age             Int
   class           String
-  competitionId   String           @map("competition_id")
+  contestId       String           @map("contest_id")
   createdAt       DateTime         @default(now()) @map("created_at")
   solvedQuestions SolvedQuestion[]
-  competition     Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  Contest         Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  @@index([contestId])
+  @@map("students")
 }
 
 model Question {
-  id            String           @id @default(cuid())
-  title         String
-  order         Int              @default(0)
-  competitionId String           @map("competition_id")
-  competition   Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  solvedBy      SolvedQuestion[]
+  id           String           @id @default(cuid())
+  title        String
+  order        Int              @default(0)
+  balloonColor String           @default("#ffffff") @map("balloon_color")
+  contestId    String           @map("contest_id")
+  Contest      Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  solvedBy     SolvedQuestion[]
+
+  @@map("questions")
 }
 
 model SolvedQuestion {
   id         String   @id @default(cuid())
-  solvedAt   DateTime @default(now()) @map("solved_at")
-  studentId  String   @map("student_id")
+  solvedAt   DateTime @default(now())
   questionId String   @map("question_id")
+  studentId  String?  @map("student_id")
+  userId     String   @map("user_id")
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student    Student? @relation(fields: [studentId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, questionId])
+  @@unique([userId, questionId])
+  @@map("solved_questions")
+}
+
+enum Role {
+  ADMIN   @map("admin")
+  STUDENT @map("student")
 }
