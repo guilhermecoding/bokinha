@@ -84,7 +84,7 @@ function DialogAddStudent({ open, setOpen, defaultContestId }: {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Adicionar Estudante</DialogTitle>
+          <DialogTitle>Adicionar Participante</DialogTitle>
           <DialogDescription className="sr-only">Formulário para cadastrar novo estudante</DialogDescription>
         </DialogHeader>
 
