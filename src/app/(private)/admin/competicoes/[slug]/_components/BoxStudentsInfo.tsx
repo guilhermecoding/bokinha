@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { IconUserFilled, IconUserPlus, IconTrashFilled } from '@tabler/icons-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -25,7 +25,7 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { User } from '../../../../../../../../generated/prisma/browser';
+import { User } from '../../../../../../../generated/prisma/browser';
 
 const studentCreateSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
@@ -57,6 +57,13 @@ function DialogAddStudent({ open, setOpen, defaultContestId }: {
       contestId: defaultContestId ?? null,
     },
   });
+
+  // limpa inputs quando o dialog fechar
+  useEffect(() => {
+    if (!open) {
+      form.reset();
+    }
+  }, [open, form]);
 
   const createMutation = useMutation({
     mutationFn: async (payload: StudentCreateInput) => {

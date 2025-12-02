@@ -1,7 +1,7 @@
 import Page from '@/components/Page';
 import Section from '@/components/Section';
 import BoxContestInfo from './_components/BoxContestInfo';
-import BoxStudentsInfo from './_components/BoxStudentsInfo/BoxStudentsInfo';
+import BoxStudentsInfo from './_components/BoxStudentsInfo';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 
