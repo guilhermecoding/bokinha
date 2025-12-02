@@ -13,9 +13,9 @@ model User {
   email           String           @unique
   password        String
   role            Role             @default(STUDENT)
-  turma           String?
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
+  class           String?
   solvedQuestions SolvedQuestion[]
 
   @@map("users")
@@ -26,6 +26,9 @@ model Competition {
   name          String
   adminPassword String     @map("admin_password")
   createdAt     DateTime   @default(now()) @map("created_at")
+  endTime       DateTime   @map("end_time")
+  slug          String     @unique
+  startTime     DateTime   @map("start_time")
   questions     Question[]
   students      Student[]
 
@@ -42,6 +45,7 @@ model Student {
   solvedQuestions SolvedQuestion[]
   competition     Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
 
+  @@index([competitionId])
   @@map("students")
 }
 
@@ -59,9 +63,9 @@ model Question {
 model SolvedQuestion {
   id         String   @id @default(cuid())
   solvedAt   DateTime @default(now())
-  userId     String
-  questionId String
-  studentId  String?
+  questionId String   @map("question_id")
+  studentId  String?  @map("student_id")
+  userId     String   @map("user_id")
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
   student    Student? @relation(fields: [studentId], references: [id])
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -71,6 +75,6 @@ model SolvedQuestion {
 }
 
 enum Role {
-  ADMIN
-  STUDENT
+  ADMIN   @map("admin")
+  STUDENT @map("student")
 }
