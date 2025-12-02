@@ -7,6 +7,20 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id              String           @id @default(cuid())
+  name            String?
+  email           String           @unique
+  password        String
+  role            Role             @default(STUDENT)
+  turma           String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  solvedQuestions SolvedQuestion[]
+
+  @@map("users")
+}
+
 model Competition {
   id            String     @id @default(cuid())
   name          String
@@ -14,6 +28,8 @@ model Competition {
   createdAt     DateTime   @default(now()) @map("created_at")
   questions     Question[]
   students      Student[]
+
+  @@map("competitions")
 }
 
 model Student {
@@ -25,6 +41,8 @@ model Student {
   createdAt       DateTime         @default(now()) @map("created_at")
   solvedQuestions SolvedQuestion[]
   competition     Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+
+  @@map("students")
 }
 
 model Question {
@@ -34,15 +52,25 @@ model Question {
   competitionId String           @map("competition_id")
   competition   Competition      @relation(fields: [competitionId], references: [id], onDelete: Cascade)
   solvedBy      SolvedQuestion[]
+
+  @@map("questions")
 }
 
 model SolvedQuestion {
   id         String   @id @default(cuid())
-  solvedAt   DateTime @default(now()) @map("solved_at")
-  studentId  String   @map("student_id")
-  questionId String   @map("question_id")
+  solvedAt   DateTime @default(now())
+  userId     String
+  questionId String
+  studentId  String?
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  student    Student  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student    Student? @relation(fields: [studentId], references: [id])
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@unique([studentId, questionId])
+  @@unique([userId, questionId])
+  @@map("solved_questions")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
 }
