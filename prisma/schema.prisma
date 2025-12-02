@@ -51,12 +51,13 @@ model Student {
 }
 
 model Question {
-  id        String           @id @default(cuid())
-  title     String
-  order     Int              @default(0)
-  contestId String           @map("contest_id")
-  Contest   Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
-  solvedBy  SolvedQuestion[]
+  id           String           @id @default(cuid())
+  title        String
+  order        Int              @default(0)
+  balloonColor String           @default("#ffffff") @map("balloon_color")
+  contestId    String           @map("contest_id")
+  Contest      Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  solvedBy     SolvedQuestion[]
 
   @@map("questions")
 }
