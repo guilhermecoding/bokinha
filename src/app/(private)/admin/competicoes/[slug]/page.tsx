@@ -1,15 +1,21 @@
 import Page from '@/components/Page';
+import Section from '@/components/Section';
+import BoxContestInfo from './_components/BoxContestInfo';
+import BoxStudentsInfo from './_components/BoxStudentsInfo/BoxStudentsInfo';
 
-export default async function ContestPage({
+export default function ContestPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: { slug: string }
 }) {
-    const { slug } = await params;
 
     return (
       <Page>
-        <h1>Competição: {slug}</h1>
+        <Section className='flex flex-col lg:flex-row justify-between gap-5'>
+          <BoxContestInfo />
+
+          <BoxStudentsInfo />
+        </Section>
       </Page>
     );
 }

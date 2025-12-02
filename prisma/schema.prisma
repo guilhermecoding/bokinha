@@ -12,8 +12,8 @@ datasource db {
 // =========================================================
 
 enum Role {
-  ADMIN   @map("admin")
-  STUDENT @map("student")
+  ADMIN
+  STUDENT
 }
 
 // =========================================================
@@ -28,8 +28,8 @@ model User {
   role     Role   @default(STUDENT)
 
   // Campos específicos de Estudante (opcionais para Admin)
-  turma String?
-  age   Int?
+  schoolClass String? @map("school_class")
+  age         Int?
 
   // Relacionamento: Em qual competição este aluno está inscrito?
   contestId String?  @map("contest_id")
