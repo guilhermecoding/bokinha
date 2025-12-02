@@ -7,76 +7,104 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id              String           @id @default(cuid())
-  name            String?
-  email           String           @unique
-  password        String
-  role            Role             @default(STUDENT)
-  createdAt       DateTime         @default(now()) @map("created_at")
-  updatedAt       DateTime         @updatedAt @map("updated_at")
-  class           String?
-  solvedQuestions SolvedQuestion[]
-
-  @@map("users")
-}
-
-model Contest {
-  id            String     @id @default(cuid())
-  name          String
-  adminPassword String     @map("admin_password")
-  slug          String     @unique
-  startTime     DateTime   @map("start_time")
-  endTime       DateTime   @map("end_time")
-  createdAt     DateTime   @default(now()) @map("created_at")
-  updatedAt     DateTime   @updatedAt @map("updated_at")
-  questions     Question[]
-  students      Student[]
-
-  @@map("contests")
-}
-
-model Student {
-  id              String           @id @default(cuid())
-  fullName        String           @map("full_name")
-  age             Int
-  class           String
-  contestId       String           @map("contest_id")
-  createdAt       DateTime         @default(now()) @map("created_at")
-  solvedQuestions SolvedQuestion[]
-  Contest         Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
-
-  @@index([contestId])
-  @@map("students")
-}
-
-model Question {
-  id           String           @id @default(cuid())
-  title        String
-  order        Int              @default(0)
-  balloonColor String           @default("#ffffff") @map("balloon_color")
-  contestId    String           @map("contest_id")
-  Contest      Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
-  solvedBy     SolvedQuestion[]
-
-  @@map("questions")
-}
-
-model SolvedQuestion {
-  id         String   @id @default(cuid())
-  solvedAt   DateTime @default(now())
-  questionId String   @map("question_id")
-  studentId  String?  @map("student_id")
-  userId     String   @map("user_id")
-  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  student    Student? @relation(fields: [studentId], references: [id])
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([userId, questionId])
-  @@map("solved_questions")
-}
+// =========================================================
+// 1. ENUMS
+// =========================================================
 
 enum Role {
   ADMIN   @map("admin")
   STUDENT @map("student")
+}
+
+// =========================================================
+// 2. USUÁRIOS (Admin e Estudantes)
+// =========================================================
+
+model User {
+  id       String @id @default(cuid())
+  name     String
+  email    String @unique
+  password String // Senha hash (bcrypt)
+  role     Role   @default(STUDENT)
+
+  // Campos específicos de Estudante (opcionais para Admin)
+  turma String?
+  age   Int?
+
+  // Relacionamento: Em qual competição este aluno está inscrito?
+  contestId String?  @map("contest_id")
+  contest   Contest? @relation(fields: [contestId], references: [id])
+
+  // Histórico de acertos
+  solvedQuestions SolvedQuestion[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+// =========================================================
+// 3. A COMPETIÇÃO
+// =========================================================
+
+model Contest {
+  id   String @id @default(cuid())
+  name String // Ex: "Maratona 2025"
+  slug String @unique // Para URL: /contest/maratona-2025
+
+  // Controle de Tempo e Acesso
+  adminPassword String   @map("admin_password") // Senha que o prof digita na tela do aluno
+  startTime     DateTime @map("start_time")
+  endTime       DateTime @map("end_time")
+
+  // Relacionamentos
+  users     User[]
+  questions Question[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("contests")
+}
+
+// =========================================================
+// 4. AS QUESTÕES
+// =========================================================
+
+model Question {
+  id           String @id @default(cuid())
+  title        String
+  order        Int    @default(0)
+  balloonColor String @default("#ffffff") @map("balloon_color") // Hex Code
+
+  contestId String  @map("contest_id")
+  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
+
+  solvedBy SolvedQuestion[]
+
+  @@map("questions")
+}
+
+// =========================================================
+// 5. REGISTRO DE ACERTOS (Tabela Pivô)
+// =========================================================
+
+model SolvedQuestion {
+  id String @id @default(cuid())
+
+  // Ouro: O horário exato do acerto para desempate
+  solvedAt DateTime @default(now()) @map("solved_at")
+
+  // Quem acertou? (Agora aponta para User)
+  userId String @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Qual questão?
+  questionId String   @map("question_id")
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  // Regra: Um usuário só pode ter UM registro de acerto para cada questão
+  @@unique([userId, questionId])
+  @@map("solved_questions")
 }
