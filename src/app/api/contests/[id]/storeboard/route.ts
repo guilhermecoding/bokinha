@@ -19,7 +19,7 @@ export async function GET(
     // busca todos os usuários da competição
     const users = await prisma.user.findMany({
       where: { contestId: id },
-      select: { id: true, name: true, email: true },
+      select: { id: true, name: true, email: true, schoolClass: true },
     });
 
     // busca todos os registros de acerto das questões dessa competição

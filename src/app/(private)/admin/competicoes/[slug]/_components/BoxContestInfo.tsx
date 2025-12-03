@@ -97,7 +97,7 @@ export default function BoxContestInfo({
       </div>
 
       {isLoading ? (
-        <p className="text-muted-foreground">Carregando alunos...</p>
+        <p className="text-muted-foreground">Carregando dados da competição...</p>
       ) : !contest ? (
         <p className="text-muted-foreground">Competição não encontrada</p>
       ) : (
