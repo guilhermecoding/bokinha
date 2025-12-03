@@ -241,10 +241,10 @@ export default function BoxQuestions({
 }: { 
     contestId?: string | null 
 }) {
-  const [openAddQ, setOpenAddQ] = useState(false);
+  const [openAddQ, setOpenAddQ] = useState<boolean>(false);
 
   // estados para o modal de delete de questão
-  const [openDeleteQ, setOpenDeleteQ] = useState(false);
+  const [openDeleteQ, setOpenDeleteQ] = useState<boolean>(false);
   const [deleteQuestionId, setDeleteQuestionId] = useState<string | null>(null);
   const [deleteQuestionTitle, setDeleteQuestionTitle] = useState<string>('');
 
@@ -262,13 +262,15 @@ export default function BoxQuestions({
   return (
     <BoxContainer>
       {/* Header Section */}
-      <div className="w-full flex flex-row items-center gap-2 mb-4">
-        <IconVersionsFilled className="w-5 h-5 sm:w-6 sm:h-6" />
-        <h2 className="font-bold text-lg sm:text-2xl">Questões</h2>
-        <div className="ml-auto">
+      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4 mb-4">
+        <div className='flex flex-row items-center gap-2'>
+          <IconVersionsFilled className="w-5 h-5 sm:w-6 sm:h-6" />
+          <h2 className="font-bold text-xl sm:text-2xl">Questões</h2>
+        </div>
+        <div className="w-full sm:w-auto">
           <Button
             variant="default"
-            className="bg-green-600 text-base p-6 hover:bg-green-700 hover:cursor-pointer"
+            className="w-full sm:w-auto bg-green-600 text-base p-6 hover:bg-green-700 hover:cursor-pointer"
             onClick={() => setOpenAddQ(true)}
           >
             <IconCirclePlus className="mr-2 h-5 w-5" />

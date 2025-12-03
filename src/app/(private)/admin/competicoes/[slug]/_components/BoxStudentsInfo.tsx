@@ -2,7 +2,7 @@
 
 import BoxContainer from '@/components/BoxContainer';
 import { Button } from '@/components/ui/button';
-import { IconUserFilled, IconUserPlus, IconTrashFilled } from '@tabler/icons-react';
+import { IconUserFilled, IconUserPlus, IconCircleMinus } from '@tabler/icons-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import { useState, useEffect } from 'react';
@@ -271,14 +271,14 @@ export default function BoxStudentsInfo({
   return (
     <BoxContainer className="w-full flex flex-col">
       {/* Cabeçalho */}
-      <div className="w-full flex flex-row items-center justify-between">
+      <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex flex-row items-center gap-2">
           <IconUserFilled className="w-5 h-5 sm:w-6 sm:h-6" />
-          <h2 className="font-bold text-lg sm:text-2xl">Alunos Participantes</h2>
+          <h2 className="font-bold text-xl sm:text-2xl">Alunos Participantes</h2>
         </div>
         <Button
           variant="default"
-          className="bg-purple-800 text-base p-6 hover:bg-purple-900 hover:cursor-pointer"
+          className="w-full sm:w-auto bg-purple-800 text-base p-6 hover:bg-purple-900 hover:cursor-pointer"
           onClick={() => setOpenAdd(true)}
         >
           <IconUserPlus className="mr-2 h-5 w-5" />
@@ -318,7 +318,7 @@ export default function BoxStudentsInfo({
                        setOpenDelete(true);
                      }}
                    >
-                     <IconTrashFilled className='text-red-500' />
+                     <IconCircleMinus className='text-red-500' />
                    </Button>
                  </div>
                </li>

@@ -86,15 +86,14 @@ export default function BoxContestInfo({
 
   return (
     <BoxContainer className="w-full">
-      <div className="w-full flex flex-row items-center gap-2 mb-4">
-        <IconBalloonFilled className="w-5 h-5 sm:w-6 sm:h-6" />
-        <h2 className="font-bold text-lg sm:text-2xl">Detalhes da Competição</h2>
-        <div className="ml-auto">
+      <div className="w-full flex flex-row items-center justify-between gap-2 mb-4">
+        <div className='w-auto flex flex-row justify-center sm:justify-start items-center gap-2'>
+          <IconBalloonFilled className="w-6 h-6 sm:w-6 sm:h-6" />
+          <h2 className="font-bold text-xl sm:text-2xl">Detalhes</h2>
+        </div>
           <Button variant="ghost" onClick={() => setOpenEdit(true)}>
             <IconEdit />
-            <span className="ml-2">Editar</span>
           </Button>
-        </div>
       </div>
 
       {isLoading ? (
