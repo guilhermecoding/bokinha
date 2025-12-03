@@ -1,9 +1,24 @@
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 
 export default withAuth(
-  // Função middleware (opcional, só roda se authorized retornar true)
-  function middleware() {
+  // Função middleware (opcional, roda antes dos callbacks)
+  async function middleware(req) {
+    // Se for ADMIN, redireciona para /admin (a menos que já esteja em /admin)
+    try {
+      const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+      if (token?.role === 'ADMIN') {
+        const url = req.nextUrl.clone();
+        if (!url.pathname.startsWith('/admin')) {
+          url.pathname = '/admin';
+          return NextResponse.redirect(url);
+        }
+      }
+    } catch {
+      // não bloquear em caso de erro ao ler token
+    }
+
     return NextResponse.next();
   },
   {
