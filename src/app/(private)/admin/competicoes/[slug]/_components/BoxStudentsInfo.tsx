@@ -269,7 +269,7 @@ export default function BoxStudentsInfo({
   });
 
   return (
-    <BoxContainer className="w-full">
+    <BoxContainer className="w-full flex flex-col">
       {/* Cabeçalho */}
       <div className="w-full flex flex-row items-center justify-between">
         <div className="flex flex-row items-center gap-2">
@@ -286,48 +286,56 @@ export default function BoxStudentsInfo({
         </Button>
       </div>
 
-      {/* Conteúdo */}
-      <div className="flex flex-col items-center mt-10 w-full">
-        {isLoading ? (
-          <p className="text-muted-foreground">Carregando alunos...</p>
-        ) : isError ? (
-          <p className="text-destructive">Erro ao carregar alunos.</p>
-        ) : !data || data.length === 0 ? (
-          <p className="text-muted-foreground">Nenhum aluno encontrado.</p>
-        ) : (
-          <ul className="w-full space-y-2">
-            {data.map((student) => (
-              <li key={student.id} className="w-full border rounded-md p-3 flex justify-between items-center">
-                <div>
-                  <div className="font-medium">{student.name}</div>
-                  <div className="text-sm text-muted-foreground">{student.email}</div>
-                  <div className="text-sm text-muted-foreground">
-                    {student.schoolClass ? `Turma: ${student.schoolClass}` : 'Sem turma'}
-                    {student.age ? ` • ${student.age} anos` : ''}
-                  </div>
-                </div>
+      {/* Conteúdo: área scrollable */}
+      <div className="mt-6 w-full flex-1">
+        <div className="w-full h-full max-h-[40vh] overflow-auto">
+         {isLoading ? (
+           <p className="text-muted-foreground">Carregando alunos...</p>
+         ) : isError ? (
+           <p className="text-destructive">Erro ao carregar alunos.</p>
+         ) : !data || data.length === 0 ? (
+           <p className="text-muted-foreground">Nenhum aluno encontrado.</p>
+         ) : (
+           <ul className="w-full space-y-2">
+             {data.map((student) => (
+               <li key={student.id} className="w-full border rounded-md p-3 flex justify-between items-center">
+                 <div>
+                   <div className="font-medium">{student.name}</div>
+                   <div className="text-sm text-muted-foreground">{student.email}</div>
+                   <div className="text-sm text-muted-foreground">
+                     {student.schoolClass ? `Turma: ${student.schoolClass}` : 'Sem turma'}
+                     {student.age ? ` • ${student.age} anos` : ''}
+                   </div>
+                 </div>
 
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    title="Excluir estudante"
-                    onClick={() => {
-                      setDeleteId(student.id);
-                      setDeleteName(student.name);
-                      setOpenDelete(true);
-                    }}
-                  >
-                    <IconTrashFilled className='text-red-500' />
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+                 <div className="flex items-center gap-2">
+                   <Button
+                     variant="ghost"
+                     title="Excluir estudante"
+                     onClick={() => {
+                       setDeleteId(student.id);
+                       setDeleteName(student.name);
+                       setOpenDelete(true);
+                     }}
+                   >
+                     <IconTrashFilled className='text-red-500' />
+                   </Button>
+                 </div>
+               </li>
+             ))}
+           </ul>
+         )}
+        </div>
       </div>
 
-      <DialogAddStudent open={openAdd} setOpen={setOpenAdd} defaultContestId={contestId} />
-      <DialogDeleteStudent open={openDelete} setOpen={setOpenDelete} studentId={deleteId} studentName={deleteName} />
-    </BoxContainer>
-  );
-}
+       <DialogAddStudent open={openAdd} setOpen={setOpenAdd} defaultContestId={contestId} />
+       <DialogDeleteStudent
+         open={openDelete}
+         setOpen={setOpenDelete}
+         studentId={deleteId}
+         studentName={deleteName}
+         contestId={contestId}
+       />
+     </BoxContainer>
+   );
+ }
