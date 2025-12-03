@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import BoxContainer from '@/components/BoxContainer';
 import { Button } from '@/components/ui/button';
-import { IconCirclePlus, IconVersionsFilled, IconPlus, IconBalloonFilled } from '@tabler/icons-react';
+import { IconCirclePlus, IconVersionsFilled, IconPlus, IconTrashFilled } from '@tabler/icons-react';
 import {
   Dialog,
   DialogContent,
@@ -177,12 +177,76 @@ function CardQuestion({
     );
 }
 
+// Dialog de confirmação de deleção de questão
+function CardDeleteQuestion({
+  open,
+  setOpen,
+  questionId,
+  questionTitle,
+  contestId,
+}: {
+  open: boolean;
+  setOpen: (v: boolean) => void;
+  questionId?: string | null;
+  questionTitle?: string;
+  contestId?: string | null;
+}) {
+  const queryClient = useQueryClient();
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await axios.delete(`/api/questions/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['questions', contestId] });
+      setOpen(false);
+    },
+  });
+
+  const isDeleting = deleteMutation.isPending;
+
+  async function handleDelete() {
+    if (!questionId) return;
+    deleteMutation.mutate(questionId);
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Excluir Questão</DialogTitle>
+          <DialogDescription className="sr-only">Confirma exclusão da questão</DialogDescription>
+        </DialogHeader>
+
+        <div className="py-4">
+          <p>Tem certeza que deseja excluir a questão <strong>{questionTitle}</strong>?</p>
+        </div>
+
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={isDeleting}>
+            Cancelar
+          </Button>
+          <Button variant="destructive" onClick={handleDelete} disabled={isDeleting || !questionId}>
+            {isDeleting ? 'Excluindo...' : 'Excluir'}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 export default function BoxQuestions({ 
     contestId 
 }: { 
     contestId?: string | null 
 }) {
   const [openAddQ, setOpenAddQ] = useState(false);
+
+  // estados para o modal de delete de questão
+  const [openDeleteQ, setOpenDeleteQ] = useState(false);
+  const [deleteQuestionId, setDeleteQuestionId] = useState<string | null>(null);
+  const [deleteQuestionTitle, setDeleteQuestionTitle] = useState<string>('');
 
   const { data: questions, isLoading, isError } = useQuery<Question[]>({
     queryKey: ['questions', contestId],
@@ -228,6 +292,21 @@ export default function BoxQuestions({
               .map((q) => (
                 <li key={q.id} className="w-full border rounded-md p-3 flex justify-between items-center">
                   <CardQuestion question={q} />
+
+                  {/* Ações do card (ex: excluir) */}
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      title="Excluir questão"
+                      onClick={() => {
+                        setDeleteQuestionId(q.id);
+                        setDeleteQuestionTitle(q.title);
+                        setOpenDeleteQ(true);
+                      }}
+                    >
+                      <IconTrashFilled color="red" />
+                    </Button>
+                  </div>
                 </li>
               ))}
           </ul>
@@ -235,6 +314,13 @@ export default function BoxQuestions({
       </div>
 
       <DialogAddQuestion open={openAddQ} setOpen={setOpenAddQ} contestId={contestId} />
+      <CardDeleteQuestion
+        open={openDeleteQ}
+        setOpen={setOpenDeleteQ}
+        questionId={deleteQuestionId}
+        questionTitle={deleteQuestionTitle}
+        contestId={contestId}
+      />
     </BoxContainer>
   );
 }
