@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import BoxContainer from '@/components/BoxContainer';
 import { Button } from '@/components/ui/button';
-import { IconCirclePlus, IconVersionsFilled, IconPlus } from '@tabler/icons-react';
+import { IconCirclePlus, IconVersionsFilled, IconPlus, IconBalloonFilled } from '@tabler/icons-react';
 import {
   Dialog,
   DialogContent,
@@ -26,9 +26,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import z from 'zod';
 import questionCreateSchema from '@/schemas/quetion-create.schema';
+import Balloon from '@/components/Balloon';
 
 type QuestionCreateInput = z.infer<typeof questionCreateSchema>;
 
+type Question = {
+  id: string;
+  title: string;
+  order: number;
+  balloonColor?: string | null;
+  contestId?: string | null;
+}
+
+// Pop-up para adicionar uma nov questão
 function DialogAddQuestion({
   open,
   setOpen,
@@ -138,6 +148,35 @@ function DialogAddQuestion({
   );
 }
 
+// Card das questões
+function CardQuestion({
+  question
+}: {
+  question: Question
+}) {
+    return ( 
+      <div className='w-full flex flex-row gap-4 px-2'>
+        {/* Indice/ordem da questão */}
+        <div className='flex items-center'>
+          <span className='text-2xl font-bold text-muted-foreground'>
+            {question.order ?? '—'}
+          </span>
+        </div>
+
+        {/* Balão correspondente */}
+        <div className='flex items-center'>
+          <Balloon color={question.balloonColor} />
+        </div>
+
+        {/* Informações da questão */}
+        <div>
+          <div className="font-medium">{question.title}</div>
+          <div className="text-sm text-muted-foreground">Cor: {question.balloonColor?.toLocaleUpperCase() ?? '—'}</div>
+        </div>
+      </div>
+    );
+}
+
 export default function BoxQuestions({ 
     contestId 
 }: { 
@@ -145,18 +184,12 @@ export default function BoxQuestions({
 }) {
   const [openAddQ, setOpenAddQ] = useState(false);
 
-  const { data: questions, isLoading, isError } = useQuery({
+  const { data: questions, isLoading, isError } = useQuery<Question[]>({
     queryKey: ['questions', contestId],
     queryFn: async () => {
       if (!contestId) return [];
       const res = await axios.get(`/api/questions/${contestId}`);
-      return res.data.questions as Array<{
-        id: string;
-        title: string;
-        order: number;
-        balloonColor?: string | null;
-        contestId?: string | null;
-      }>;
+      return res.data.questions;
     },
     enabled: !!contestId,
     staleTime: 1000 * 60,
@@ -194,10 +227,7 @@ export default function BoxQuestions({
               .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
               .map((q) => (
                 <li key={q.id} className="w-full border rounded-md p-3 flex justify-between items-center">
-                  <div>
-                    <div className="font-medium">#{q.order ?? 0} — {q.title}</div>
-                    <div className="text-sm text-muted-foreground">Cor: {q.balloonColor ?? '—'}</div>
-                  </div>
+                  <CardQuestion question={q} />
                 </li>
               ))}
           </ul>
