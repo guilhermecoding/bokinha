@@ -1,11 +1,10 @@
 import type { Metadata } from 'next';
-import { Poppins } from 'next/font/google';
+import { Lexend_Deca } from 'next/font/google';
 import './globals.css';
 import Providers from '@/providers';
-import Header from '@/components/Header';
 
-const poppins = Poppins({ 
-  subsets: ['latin'], weight: ['400', '700'] 
+const lexendDeca = Lexend_Deca({ 
+  subsets: ['latin'], weight: ['400', '500', '700'] 
 });
 
 export const metadata: Metadata = {
@@ -19,11 +18,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="pt-BR" className={`${poppins.className} antialiased`}>
+      <html lang="pt-BR" className={`${lexendDeca.className} antialiased`}>
         <body className='bg-gray-200'>
            <Providers>
-            <Header />
             {children}
+            <footer className='w-full my-6 flex justify-center'>
+              <span className='text-muted-foreground'>Desenvolvido por <strong>João Guilherme</strong></span>
+            </footer>
            </Providers>
         </body>
       </html>

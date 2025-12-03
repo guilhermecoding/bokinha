@@ -1,39 +1,69 @@
-// auth.config.ts
-import type { NextAuthOptions } from 'next-auth';
 import NextAuth from 'next-auth';
-import CredencialProvider from 'next-auth/providers/credentials';
+import Credentials from 'next-auth/providers/credentials';
+import prisma from '@/lib/prisma';
+import { compare } from 'bcryptjs';
 
-// https://www.youtube.com/watch?v=r5bQgpqdNQc
-
-export const authOptions: NextAuthOptions = {
+export const authOptions = NextAuth({
   providers: [
-    CredencialProvider({
-        name: 'Credentials',
-        credentials: {
-             email: { label: 'Email', type: 'email' },
-             password: { label: 'Password', type: 'password' }
-        },
-        async authorize(credentials) {
-            const user = {
-                id: '1',
-                name: 'User Example',
-                email: 'juca@gmail.com',
-                password: '123456',
-                role: 'admin'
-            };
-
-            const isValidEmail = user.email === credentials?.email;
-            const isValidPassword = user.password === credentials?.password;
-
-            if (!isValidEmail || !isValidPassword) {
-                return null;
-            }
-            return user;
+    Credentials({
+      name: 'credentials',
+      credentials: {
+        email: {},
+        password: {},
+      },
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error('Email e senha obrigatórios');
         }
-    })
-  ], // Configurado no auth.ts
-};
 
-const handler = NextAuth(authOptions);
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
 
-export { handler as GET, handler as POST };
+         console.log(user);
+
+        if (!user) throw new Error('Usuário não encontrado');
+
+        const passwordMatch = await compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!passwordMatch) throw new Error('Senha incorreta');
+
+        return {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          role: user.role,
+        };
+      },
+    }),
+  ],
+  pages: {
+    signIn: '/login',
+  },
+  session: {
+    strategy: 'jwt',
+  },
+  callbacks: {
+    // GRAVA role no JWT
+    async jwt({ token, user }) {
+      if (user) {
+        token.role = user.role;
+      }
+      return token;
+    },
+
+    // ENVIA role para o client
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub!;
+        session.user.role = token.role as string;
+      }
+      return session;
+    },
+  },
+});
+
+export { authOptions as GET, authOptions as POST };

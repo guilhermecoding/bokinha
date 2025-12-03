@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import Balloon from '@/components/Balloon';
 
 type Question = {
   id: string;
@@ -29,6 +30,7 @@ type SolvedItem = {
   id: string;
   questionId: string;
   solvedAt: string;
+  balloonColor?: string | null;
 };
 
 type ScoreEntry = {
@@ -61,7 +63,7 @@ export default function Scoreboard({ contestId }: { contestId?: string | null })
     queryKey: ['scoreboard', contestId],
     queryFn: async () => {
       if (!contestId) return null;
-      const res = await axios.get(`/api/contests/${contestId}/storeboard`);
+      const res = await axios.get(`/api/contests/${contestId}/scoreboard`);
       return res.data;
     },
     enabled: !!contestId,
@@ -82,13 +84,14 @@ export default function Scoreboard({ contestId }: { contestId?: string | null })
   const scoreboard = scoreboardQuery.data?.scoreboard ?? [];
 
   return (
-    <Table className="bg-white border border-gray-400">
+    <Table className="bg-white border border-gray-400 text-lg">
       <TableCaption>
         Última atualização: {lastUpdate ?? '—'} {scoreboardQuery.isFetching ? '(atualizando...)' : ''}
       </TableCaption>
 
       <TableHeader>
-        <TableRow className="bg-gray-900">
+        {/* remove efeito de hover trocando bg no header */}
+        <TableRow className="bg-purple-900 hover:bg-purple-900! cursor-default">
           <TableHead className="w-[52px] text-center text-white font-bold">#</TableHead>
           <TableHead className="min-w-40 text-left text-white font-bold">Nome</TableHead>
 
@@ -111,18 +114,28 @@ export default function Scoreboard({ contestId }: { contestId?: string | null })
           </TableRow>
         ) : (
           scoreboard.map((entry, idx) => {
-            // conjunto de questionIds resolvidas pelo usuário para lookup rápido
-            const solvedSet = new Set(entry.solvedQuestions.map((s) => s.questionId));
+            // mapa questionId -> SolvedItem para lookup rápido (e pegar a cor)
+            const solvedMap = new Map<string, SolvedItem>(
+              (entry.solvedQuestions ?? []).map((s) => [s.questionId, s])
+            );
+
             return (
               <TableRow key={entry.user.id}>
                 <TableCell className="font-medium text-center">{idx + 1}</TableCell>
                 <TableCell>{entry.user.name}</TableCell>
 
-                {questions.map((q) => (
-                  <TableCell key={q.id} className="text-center">
-                    {solvedSet.has(q.id) ? 'ok' : '-'}
-                  </TableCell>
-                ))}
+                {questions.map((q) => {
+                  const solved = solvedMap.get(q.id);
+                  return (
+                    <TableCell key={q.id} className="text-center">
+                      {solved ? (
+                        <div className='w-full flex justify-center'>
+                          <Balloon color={solved.balloonColor ?? undefined} />
+                        </div>
+                      ) : '-'}
+                    </TableCell>
+                  );
+                })}
               </TableRow>
             );
           })
