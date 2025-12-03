@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dialog';
 import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import conffets from '@/components/conffets';
 
 type Question = {
   id: string;
@@ -55,6 +56,7 @@ export default function CardQuestion({
       setOpen(false);
       setPassword('');
       setError(null);
+      conffets();
     },
     onError: () => {
       setError('Erro ao marcar como feito');

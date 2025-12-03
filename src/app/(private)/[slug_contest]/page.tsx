@@ -19,12 +19,16 @@ export default async function ContestPage({
     const contest = await getContest(slug_contest); // Obtendo dados da competição pelo ID
     const session: Session | null = await getServerSession(authOptions); // Obtendo dados do usuário logado
 
+    // pega apenas o primeiro nome para a saudação
+    const fullName = session?.user?.name ?? '';
+    const firstName = fullName.split(/\s+/)[0] ?? '';
+
     return (
         <Page className='gap-3'>
             <Section>
                 <BoxContainer className='flex justify-between items-center rounded-3xl'>
                     <div>
-                        <h1 className='font-medium text-3xl'>{messageHour(new Date().getHours())}, {session?.user?.name}</h1>
+                        <h1 className='font-medium text-3xl'>{messageHour(new Date().getHours())}, {firstName}!</h1>
                         <h3 className='text-xl text-muted-foreground'>{contest?.name}</h3>
                     </div>
 
