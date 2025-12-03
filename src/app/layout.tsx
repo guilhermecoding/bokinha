@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Lexend_Deca } from 'next/font/google';
 import './globals.css';
 import Providers from '@/providers';
-import Header from '@/components/Header';
 
 const lexendDeca = Lexend_Deca({ 
   subsets: ['latin'], weight: ['400', '500', '700'] 
