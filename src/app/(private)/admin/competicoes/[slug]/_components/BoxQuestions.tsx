@@ -22,12 +22,10 @@ import {
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from 'axios';
 import z from 'zod';
 import questionCreateSchema from '@/schemas/quetion-create.schema';
-
-
 
 type QuestionCreateInput = z.infer<typeof questionCreateSchema>;
 
@@ -92,8 +90,7 @@ function DialogAddQuestion({
                 order: d.order === undefined ? undefined : Number(d.order),
                 contestId: contestId ?? d.contestId ?? undefined,
               })
-            )
-            }
+            )}
             className="space-y-4"
           >
             <FormField
@@ -111,7 +108,6 @@ function DialogAddQuestion({
             />
 
             <div className="grid grid-cols-2 gap-4">
-
               <FormField
                 control={form.control}
                 name="balloonColor"
@@ -149,6 +145,23 @@ export default function BoxQuestions({
 }) {
   const [openAddQ, setOpenAddQ] = useState(false);
 
+  const { data: questions, isLoading, isError } = useQuery({
+    queryKey: ['questions', contestId],
+    queryFn: async () => {
+      if (!contestId) return [];
+      const res = await axios.get(`/api/questions/${contestId}`);
+      return res.data.questions as Array<{
+        id: string;
+        title: string;
+        order: number;
+        balloonColor?: string | null;
+        contestId?: string | null;
+      }>;
+    },
+    enabled: !!contestId,
+    staleTime: 1000 * 60,
+  });
+
   return (
     <BoxContainer>
       {/* Header Section */}
@@ -165,6 +178,30 @@ export default function BoxQuestions({
             Adicionar Questão
           </Button>
         </div>
+      </div>
+
+      <div className="w-full">
+        {isLoading ? (
+          <p className="text-muted-foreground">Carregando questões...</p>
+        ) : isError ? (
+          <p className="text-destructive">Erro ao carregar questões.</p>
+        ) : !questions || questions.length === 0 ? (
+          <p className="text-muted-foreground">Nenhuma questão encontrada.</p>
+        ) : (
+          <ul className="w-full space-y-2">
+            {questions
+              .slice()
+              .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+              .map((q) => (
+                <li key={q.id} className="w-full border rounded-md p-3 flex justify-between items-center">
+                  <div>
+                    <div className="font-medium">#{q.order ?? 0} — {q.title}</div>
+                    <div className="text-sm text-muted-foreground">Cor: {q.balloonColor ?? '—'}</div>
+                  </div>
+                </li>
+              ))}
+          </ul>
+        )}
       </div>
 
       <DialogAddQuestion open={openAddQ} setOpen={setOpenAddQ} contestId={contestId} />

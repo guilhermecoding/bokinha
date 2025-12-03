@@ -1,32 +1,6 @@
-import prisma from '@/lib/prisma';
 import questionCreateSchema from '@/schemas/quetion-create.schema';
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-
-export async function GET(req: Request) {
-  try {
-    const url = new URL(req.url);
-    const contestId = url.searchParams.get('contestId');
-
-    const where = contestId ? { contestId } : undefined;
-
-    const questions = await prisma.question.findMany({
-      where,
-      orderBy: [{ order: 'asc' }],
-      select: {
-        id: true,
-        title: true,
-        order: true,
-        balloonColor: true,
-        contestId: true,
-      },
-    });
-
-    return NextResponse.json({ status: 'ok', questions }, { status: 200 });
-  } catch (err) {
-    console.error('Erro ao buscar questões:', err);
-    return NextResponse.json({ status: 'error', error: String(err) }, { status: 500 });
-  }
-}
 
 export async function POST(req: Request) {
   try {
