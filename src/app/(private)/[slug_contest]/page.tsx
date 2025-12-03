@@ -30,7 +30,7 @@ export default async function ContestPage({
             </Section>
             <Section className='flex gap-3'>
                 <div className='min-w-9/12'>
-                    <ContainerQuestions />
+                    <ContainerQuestions contestId={contest?.id} />
                 </div>
                 <div className='w-full'>
                     <ContainerScoreboard contestId={contest?.id} />   
