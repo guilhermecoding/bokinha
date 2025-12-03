@@ -26,7 +26,7 @@ import createContestSchema from '@/schemas/create-contest.schema';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Contest } from '../../../../../generated/prisma/client';
 import axios from 'axios';
-import { useRouter } from 'next/navigation'; // adicionado
+import { useRouter } from 'next/navigation';
 
 function CardCreateContest({
     open,
@@ -51,7 +51,7 @@ function CardCreateContest({
 
     const createContestMutation = useMutation({
       mutationFn: async (payload: z.infer<typeof createContestSchema>) => {
-        const { data } = await axios.post('/api/competicoes', payload);
+        const { data } = await axios.post('/api/contests', payload);
         return data;
       },
       onSuccess: () => {
@@ -203,7 +203,7 @@ function CardDeleteContest({
 
     const deleteMutation = useMutation({
       mutationFn: async (id: string) => {
-        const { data } = await axios.delete(`/api/competicoes/${id}`);
+        const { data } = await axios.delete(`/api/contests/${id}`);
         return data;
       },
       onSuccess: () => {
@@ -273,7 +273,7 @@ export default function BoxContest() {
     const {data, isLoading } = useQuery<Contest[]>({
         queryKey: ['contests'],
         queryFn: async () => {
-            const { data } = await axios.get('/api/competicoes');
+            const { data } = await axios.get('/api/contests');
             return data.contests as Contest[];
         },
     });

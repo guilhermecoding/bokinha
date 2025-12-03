@@ -15,10 +15,7 @@ export async function GET() {
         startTime: true,
         endTime: true,
         createdAt: true,
-        updatedAt: true,
-        _count: {
-          select: { questions: true, students: true },
-        },
+        updatedAt: true
       },
     });
 
