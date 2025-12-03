@@ -22,6 +22,9 @@ export default function RootLayout({
         <body className='bg-gray-200'>
            <Providers>
             {children}
+            <footer className='w-full my-6 flex justify-center'>
+              <span className='text-muted-foreground'>Desenvolvido por <strong>João Guilherme</strong></span>
+            </footer>
            </Providers>
         </body>
       </html>

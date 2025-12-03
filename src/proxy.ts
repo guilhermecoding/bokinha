@@ -11,6 +11,11 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname;
 
+        // liberar acesso público para /placar e qualquer subrota (ex: /placar/..., /placar/abc)
+        if (path.startsWith('/placar')) {
+          return true;
+        }
+
         // 1. Verifica se está logado
         const isLoggedIn = !!token;
 

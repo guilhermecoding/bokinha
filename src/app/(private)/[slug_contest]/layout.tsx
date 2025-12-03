@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import { cache } from 'react';
-import HeaderParticipant from './_components/HeaderParticipant';
+import Header from '@/components/Header';
 
 export const metadata: Metadata = {
   title: 'BOKINHA - Brazil Online Contest Administrator Kids',
@@ -35,7 +35,7 @@ export default async function ContestLayout({
 
     return (
         <>
-            <HeaderParticipant />
+            <Header />
             {children}
         </>
     );

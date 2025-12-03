@@ -1,3 +1,4 @@
+import Logo from '@/components/Logo';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -10,5 +11,12 @@ export default function PlacarLayout({
 }: {
     children: React.ReactNode
 }) {
-    return children;
+    return (
+        <>
+            <div className='w-full flex justify-center px-8 py-4'>
+                <Logo />
+            </div>
+            {children}
+        </>
+    );
 }

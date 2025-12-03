@@ -19,7 +19,7 @@ export default function HomePage() {
   }
 
   return (
-    <Page className='h-screen'>
+    <Page className='h-[90vh]'>
       <Section className='w-full h-full flex flex-col justify-center items-center gap-3'>
         <Logo />
         <h1 className='text-xl mt-5'>Insira o slug da competição</h1>

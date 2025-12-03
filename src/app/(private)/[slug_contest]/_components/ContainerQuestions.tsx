@@ -27,7 +27,7 @@ export default function ContainerQuestions({
   });
 
   return (
-    <BoxContainer className='w-full rounded-3xl space-y-3'>
+    <BoxContainer className='w-full h-full rounded-3xl space-y-3'>
       <div className='w-full flex justify-center'>
         <h1 className='text-muted-foreground text-lg'>Questões</h1>
       </div>

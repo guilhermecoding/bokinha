@@ -69,7 +69,7 @@ export default function Home() {
   // UI
   // ---------------------
   return (
-    <Page className="h-screen">
+    <Page className="h-[90vh]">
       <Section className="w-full h-full flex flex-col justify-center items-center gap-8">
         <div className='w-full flex flex-col items-center gap-2'>
           <Logo />

@@ -23,17 +23,44 @@ export async function GET(
     });
 
     // busca todos os registros de acerto das questões dessa competição
+    // agora traz também dados da questão (ex: balloonColor, order) para retornar a cor do balão
     const solved = await prisma.solvedQuestion.findMany({
       where: { question: { contestId: id } },
-      select: { id: true, solvedAt: true, userId: true, questionId: true },
+      select: {
+        id: true,
+        solvedAt: true,
+        userId: true,
+        questionId: true,
+        question: {
+          select: {
+            balloonColor: true,
+            order: true,
+            title: true,
+          },
+        },
+      },
     });
 
     // agrupa por usuário
-    const map = new Map<string, { solvedCount: number; lastSolvedAt: Date | null; solved: { id: string; questionId: string; solvedAt: Date }[] }>();
+    const map = new Map<
+      string,
+      {
+        solvedCount: number;
+        lastSolvedAt: Date | null;
+        solved: { id: string; questionId: string; solvedAt: Date; balloonColor?: string | null; order?: number | null; title?: string | null }[];
+      }
+    >();
     for (const s of solved) {
       const cur = map.get(s.userId) ?? { solvedCount: 0, lastSolvedAt: null, solved: [] };
       cur.solvedCount += 1;
-      cur.solved.push({ id: s.id, questionId: s.questionId, solvedAt: s.solvedAt });
+      cur.solved.push({
+        id: s.id,
+        questionId: s.questionId,
+        solvedAt: s.solvedAt,
+        balloonColor: s.question?.balloonColor ?? null,
+        order: s.question?.order ?? null,
+        title: s.question?.title ?? null,
+      });
       if (!cur.lastSolvedAt || s.solvedAt > cur.lastSolvedAt) cur.lastSolvedAt = s.solvedAt;
       map.set(s.userId, cur);
     }
