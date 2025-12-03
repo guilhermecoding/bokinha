@@ -2,7 +2,7 @@
 
 import BoxContainer from '@/components/BoxContainer';
 import { Button } from '@/components/ui/button';
-import { IconBalloonFilled, IconEdit } from '@tabler/icons-react';
+import { IconBalloonFilled, IconEdit, IconExternalLink } from '@tabler/icons-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import z from 'zod';
 import updateContestSchema from '@/schemas/update-contest.schema';
+import Link from 'next/link';
 
 type UpdateContestInput = z.infer<typeof updateContestSchema>;
 
@@ -107,6 +108,12 @@ export default function BoxContestInfo({
           <div><strong>Início:</strong> {new Date(contest.startTime).toLocaleString()}</div>
           <div><strong>Fim:</strong> {new Date(contest.endTime).toLocaleString()}</div>
           <div><strong>Criado em:</strong> {new Date(contest.createdAt).toLocaleString()}</div>
+          <div><strong>Última atualização:</strong> {new Date(contest.updatedAt).toLocaleString()}</div>
+          <div>
+            <Link className='flex items-center gap-1 text-blue-500 hover:text-blue-700' href={`/placar/${contest.slug}`} target='_blank' rel='noopener noreferrer'>
+              <IconExternalLink className='w-5 h-5' /> Conferir Placar
+            </Link>
+          </div>
         </div>
       )}
 
