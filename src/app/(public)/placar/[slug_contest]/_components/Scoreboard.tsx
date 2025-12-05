@@ -72,9 +72,11 @@ export default function Scoreboard({ contestId }: { contestId?: string | null })
   });
 
   // derive lastUpdate from scoreboardQuery to avoid setState in an effect
+  // use dataUpdatedAt: atualiza a cada refetch mesmo que o payload não mude
   const lastUpdate = useMemo(() => {
-    return scoreboardQuery.data ? new Date().toLocaleTimeString() : null;
-  }, [scoreboardQuery.data]);
+    const ts = scoreboardQuery.dataUpdatedAt;
+    return ts ? new Date(ts).toLocaleTimeString() : null;
+  }, [scoreboardQuery.dataUpdatedAt]);
 
   const questions = useMemo(() => {
     const qs = questionsQuery.data ?? [];
