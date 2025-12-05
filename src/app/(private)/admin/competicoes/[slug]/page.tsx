@@ -28,7 +28,7 @@ export default async function ContestPage({
   return (
     <Page className='gap-5'>
       <Section>
-        <Link href='/admin' className='flex items-center cursor-pointer hover:font-bold'>
+        <Link href='/admin' className='flex w-min items-center cursor-pointer hover:font-bold'>
         <IconArrowBadgeLeftFilled /> Competições
         </Link>
       </Section>
