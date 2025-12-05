@@ -54,13 +54,26 @@ export default function BoxContestInfo({
     },
   });
 
+  // formata ISO para value de <input type="datetime-local"> no fuso local
+  function toLocalDatetimeLocal(iso?: string | null) {
+    if (!iso) return '';
+    const d = new Date(iso);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const year = d.getFullYear();
+    const month = pad(d.getMonth() + 1);
+    const day = pad(d.getDate());
+    const hours = pad(d.getHours());
+    const minutes = pad(d.getMinutes());
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
   useEffect(() => {
     if (contest) {
       form.reset({
         name: contest.name,
         adminPassword: contest.adminPassword ?? '',
-        startTime: new Date(contest.startTime).toISOString().slice(0, 16),
-        endTime: new Date(contest.endTime).toISOString().slice(0, 16),
+        startTime: toLocalDatetimeLocal(contest.startTime),
+        endTime: toLocalDatetimeLocal(contest.endTime),
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

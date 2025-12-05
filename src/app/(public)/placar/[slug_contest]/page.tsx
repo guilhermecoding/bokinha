@@ -16,13 +16,23 @@ export default async function PlacarPage({
         notFound();
     }
 
+    const startFormatted = contest.startTime
+      ? new Date(contest.startTime).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+      : '—';
+    const endFormatted = contest.endTime
+      ? new Date(contest.endTime).toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' })
+      : '—';
+
     return (
         <Page>
             <Section className='flex justify-center'>
                 <h1 className='font-bold text-4xl text-gray-800'>{contest.name}</h1>
             </Section>
+
             <Section className='mt-4'>
-                <Scoreboard contestId={contest.id} />
+              <div>Início: {startFormatted}</div>
+              <div>Fim: {endFormatted}</div>
+              <Scoreboard contestId={contest.id} />
             </Section>
         </Page>
     );
