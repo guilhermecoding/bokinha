@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Logo from '@/components/Logo';
 import Page from '@/components/Page';
 import Section from '@/components/Section';
@@ -32,6 +33,7 @@ type LoginInput = z.infer<typeof loginSchema>;
 // ---------------------
 export default function Home() {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   const form = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
@@ -46,23 +48,28 @@ export default function Home() {
   // SUBMIT DO LOGIN REAL
   // ---------------------
   async function onSubmit(values: LoginInput) {
-    const result = await signIn('credentials', {
-      email: values.email,
-      password: values.password,
-      redirect: false, // evita redirect automático
-    });
+    setLoading(true);
+    try {
+      const result = await signIn('credentials', {
+        email: values.email,
+        password: values.password,
+        redirect: false, // evita redirect automático
+      });
 
-    if (result?.error) {
-      form.setError('email', {
-        message: 'Email ou senha inválidos',
-      });
-      form.setError('password', {
-        message: 'Verifique suas credenciais',
-      });
-      return;
+      if (result?.error) {
+        form.setError('email', {
+          message: 'Email ou senha inválidos',
+        });
+        form.setError('password', {
+          message: 'Verifique suas credenciais',
+        });
+        return;
+      }
+
+      router.push('/');
+    } finally {
+      setLoading(false);
     }
-
-    router.push('/');
   }
 
   // ---------------------
@@ -129,9 +136,20 @@ export default function Home() {
                 <Button
                   type="submit"
                   className='w-full bg-purple-700 hover:bg-purple-800 cursor-pointer'
-                  disabled={!form.formState.isValid}
+                  disabled={!form.formState.isValid || loading}
+                  aria-busy={loading}
                 >
-                  Entrar
+                  {loading ? (
+                    <span className="inline-flex items-center">
+                      <svg className="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                      </svg>
+                      Entrando...
+                    </span>
+                  ) : (
+                    'Entrar'
+                  )}
                 </Button>
               </div>
 
