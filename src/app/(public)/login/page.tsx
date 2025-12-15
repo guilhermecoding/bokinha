@@ -31,7 +31,7 @@ type LoginInput = z.infer<typeof loginSchema>;
 // ---------------------
 // COMPONENTE
 // ---------------------
-export default function Home() {
+export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +45,7 @@ export default function Home() {
   });
 
   // ---------------------
-  // SUBMIT DO LOGIN REAL
+  // SUBMIT DO LOGIN
   // ---------------------
   async function onSubmit(values: LoginInput) {
     setLoading(true);
@@ -53,7 +53,7 @@ export default function Home() {
       const result = await signIn('credentials', {
         email: values.email,
         password: values.password,
-        redirect: false, // evita redirect automático
+        redirect: false,
       });
 
       if (result?.error) {
@@ -66,7 +66,21 @@ export default function Home() {
         return;
       }
 
-      router.push('/');
+      // ✅ Busca a sessão atualizada para obter o role
+      const response = await fetch('/api/auth/session');
+      const session = await response.json();
+
+      // ✅ Redireciona baseado no role
+      if (session?.user?.role === 'ADMIN') {
+        router.push('/admin');
+      } else if (session?.user?.contestSlug) {
+        router.push(`/team/${session.user.contestSlug}`);
+      } else {
+        router.push('/');
+      }
+      
+      // ✅ Force refresh para garantir que o middleware pegue o token
+      router.refresh();
     } finally {
       setLoading(false);
     }

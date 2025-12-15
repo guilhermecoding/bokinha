@@ -26,6 +26,8 @@ COPY . .
 # Desabilita telemetria do Next.js durante o build
 ENV NEXT_TELEMETRY_DISABLED 1
 
+ENV NEXT_PUBLIC_BUILD_ENV=production
+
 # IMPORTANTE: Gera o cliente do Prisma ANTES do build do Next
 # O Next precisa dos tipos do Prisma para compilar
 RUN DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy" pnpm prisma generate

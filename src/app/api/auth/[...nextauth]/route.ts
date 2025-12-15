@@ -1,9 +1,10 @@
-import NextAuth from 'next-auth';
+import NextAuth, { AuthOptions } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import prisma from '@/lib/prisma';
 import { compare } from 'bcryptjs';
 
-export const authOptions = NextAuth({
+// ✅ Exportar authOptions como constante
+export const authOptions: AuthOptions = {
   providers: [
     Credentials({
       name: 'credentials',
@@ -18,9 +19,8 @@ export const authOptions = NextAuth({
 
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
+          include: { contest: true },
         });
-
-         console.log(user);
 
         if (!user) throw new Error('Usuário não encontrado');
 
@@ -36,6 +36,7 @@ export const authOptions = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          contestSlug: user.contest?.slug,
         };
       },
     }),
@@ -47,23 +48,27 @@ export const authOptions = NextAuth({
     strategy: 'jwt',
   },
   callbacks: {
-    // GRAVA role no JWT
+    // GRAVA role e contestSlug no JWT
     async jwt({ token, user }) {
       if (user) {
         token.role = user.role;
+        token.contestSlug = user.contestSlug;
       }
       return token;
     },
 
-    // ENVIA role para o client
+    // ENVIA role e contestSlug para o client
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.sub!;
         session.user.role = token.role as string;
+        session.user.contestSlug = token.contestSlug as string;
       }
       return session;
     },
   },
-});
+};
 
-export { authOptions as GET, authOptions as POST };
+// ✅ Criar handler e exportar GET e POST
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
