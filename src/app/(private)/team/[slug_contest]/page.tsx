@@ -3,12 +3,12 @@ import { getContest } from './layout';
 import Section from '@/components/Section';
 import BoxContainer from '@/components/BoxContainer';
 import TimeContest from './_components/TimeContest';
-import messageHour from '@/lib/message-hour';
 import ContainerQuestions from './_components/ContainerQuestions';
 import ContainerScoreboard from './_components/ContainerScoreboard';
 import { getServerSession } from 'next-auth/next';
 import { Session } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import GreetingUser from './_components/GreetingUser';
 
 export default async function ContestPage({
     params
@@ -27,11 +27,7 @@ export default async function ContestPage({
         <Page className='gap-3'>
             <Section>
                 <BoxContainer className='flex justify-between items-center rounded-3xl'>
-                    <div>
-                        <h1 className='font-medium text-3xl'>{messageHour(new Date().getHours())}, {firstName}!</h1>
-                        <h3 className='text-xl text-muted-foreground'>{contest?.name}</h3>
-                    </div>
-
+                    <GreetingUser firstName={firstName} contestName={contest?.name} />
                     <TimeContest startTime={contest?.startTime} endTime={contest?.endTime} />
                 </BoxContainer>
             </Section>
