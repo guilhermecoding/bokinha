@@ -1,47 +1,24 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { getServerSession, Session } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Logo from '@/components/Logo';
-import Page from '@/components/Page';
-import Section from '@/components/Section';
-import { Button } from '@/components/ui/button';
+export default async function Home() {
+  const session: Session | null = await getServerSession(authOptions);
 
-export default function HomePage() {
-  const [slug, setSlug] = useState('');
-  const router = useRouter();
-
-  function handleSubmit(e?: React.FormEvent) {
-    if (e) e.preventDefault();
-    const s = slug.trim();
-    if (!s) return;
-    router.push(`/${s}`);
+  // Não está logado → redireciona para /login
+  if (!session) {
+    redirect('/login');
   }
 
-  return (
-    <Page className='h-[90vh]'>
-      <Section className='w-full h-full flex flex-col justify-center items-center gap-3'>
-        <Logo />
-        <h1 className='text-xl mt-5'>Insira o slug da competição</h1>
+  // Está logado → redireciona baseado no role
+  if (session.user.role === 'ADMIN') {
+    redirect('/admin');
+  }
 
-        <form onSubmit={handleSubmit} className="flex flex-col items-center gap-3">
-          <input
-            type='text'
-            placeholder='ex: copa-do-brasil'
-            className='border bg-white border-gray-300 rounded-lg px-3 py-2 w-72 text-center'
-            value={slug}
-            onChange={(e) => setSlug(e.target.value)}
-          />
+  if (session.user.contestSlug) {
+    redirect(`/team/${session.user.contestSlug}`);
+  }
 
-          <Button
-            type="submit"
-            className='w-72 bg-purple-700 hover:bg-purple-800 cursor-pointer'
-            disabled={!slug.trim()}
-          >
-            Entrar
-          </Button>
-        </form>
-      </Section>
-    </Page>
-  );
+  // Fallback caso não tenha contestSlug
+  redirect('/login');
 }
