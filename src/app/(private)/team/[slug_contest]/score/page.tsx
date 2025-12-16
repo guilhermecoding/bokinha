@@ -3,8 +3,9 @@ import ScoreboardPage from '@/components/ScoreboardPage/ScoreBoardPage';
 export default async function TeamScoreboardPage({
   params
 }: {
-  params: Promise<{ slugContest: string }>
+  params: Promise<{ slug_contest: string }>
 }) {
-  const { slugContest } = await params;
+  const { slug_contest: slugContest } = await params;
+  
   return <ScoreboardPage slugContest={slugContest} />;
 }
