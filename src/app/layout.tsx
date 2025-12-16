@@ -43,9 +43,9 @@ export default function RootLayout({
         <body className='bg-gray-200'>
            <Providers>
             {children}
-            <footer className='w-full my-6 flex justify-center'>
+            {/* <footer className='w-full my-6 flex justify-center'>
               <span className='text-sm text-muted-foreground'>Desenvolvido por <strong>João Guilherme</strong> &copy; {new Date().getFullYear()} - v1.1.0</span>
-            </footer>
+            </footer> */}
            </Providers>
         </body>
       </html>
