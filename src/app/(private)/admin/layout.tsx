@@ -2,11 +2,10 @@ import Header from '@/components/Header';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'BOKINHA | Portal Administrativo',
-  description: 'Portal administrativo - BOKINHA',
+  title: 'Portal Administrativo'
 };
 
-export default function NewContestLayout({
+export default function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
