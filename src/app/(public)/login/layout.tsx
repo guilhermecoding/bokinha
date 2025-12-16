@@ -1,13 +1,13 @@
 import type { Metadata } from 'next';
+
 export const metadata: Metadata = {
-  title: 'BOKINHA - Login',
-  description: 'BOKINHA é uma plataforma para gerenciar competições de programação para crianças e adolescentes.',
+  title: 'Entrar',
 };
 
-export default function RootLayout({
-  children,
+export default function LoginLayout({
+    children
 }: Readonly<{
-  children: React.ReactNode;
+    children: React.ReactNode
 }>) {
   return children;
 }
