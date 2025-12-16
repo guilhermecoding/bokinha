@@ -11,13 +11,13 @@ import Link from 'next/link';
 export default async function ContestPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug_contest: string }>
 }) {
-  const { slug } = await params;
+  const { slug_contest: slugContest } = await params;
 
   // busca minimal para checar existência
   const contest = await prisma.contest.findUnique({
-    where: { slug },
+    where: { slug: slugContest },
     select: { id: true, name: true, slug: true },
   });
 
