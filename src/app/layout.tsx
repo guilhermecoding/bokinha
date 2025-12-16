@@ -8,8 +8,26 @@ const lexendDeca = Lexend_Deca({
 });
 
 export const metadata: Metadata = {
-  title: 'BOKINHA - Brazil Online Contest Administrator Kids',
-  description: 'BOKINHA é uma plataforma para gerenciar competições de programação para crianças e adolescentes.',
+  metadataBase: new URL('https://bokinha.guilhermecoding.com'),
+
+  title: 'BOKINHA - Brasil Online Contest Administrator Kids',
+  description: 'BOKINHA é uma plataforma para gerenciar competições de programação para crianças e adolescentes, com o objetivo de facilitar a gestão de conclusão de exercícios resolvidos.',
+  openGraph: {
+    title: 'BOKINHA - Brasil Online Contest Administrator Kids',
+    description: 'BOKINHA é uma plataforma para gerenciar competições de programação para crianças e adolescentes, com o objetivo de facilitar a gestão de conclusão de exercícios resolvidos.',
+    url: 'https://bokinha.guilhermecoding.com',
+    siteName: 'BOKINHA - Brasil Online Contest Administrator Kids',
+    images: [
+      {
+        url: 'og-bokinha.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'Open Graph do BOKINHA.'
+      }
+    ],
+    locale: 'pt-BR',
+    type: 'website'
+  }
 };
 
 export default function RootLayout({
