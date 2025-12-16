@@ -10,6 +10,8 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import GreetingUser from './_components/GreetingUser';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import getContestStatus from '@/lib/get-content-status';
+import RegressiveTimer from '@/components/RegressiveTime/RegressiveTimer';
 
 export default async function ContestPage({
     params
@@ -39,9 +41,26 @@ export default async function ContestPage({
 
     const session: Session | null = await getServerSession(authOptions);
 
-    // pega apenas o primeiro nome para a saudação
+    // Pega apenas o primeiro nome para a saudação
     const fullName = session?.user?.name ?? '';
     const firstName = fullName.split(/\s+/)[0] ?? '';
+
+    const status = getContestStatus(
+        contest.startTime,
+        contest.endTime
+    );
+
+    if (status === 'BEFORE') {
+        return (
+            <RegressiveTimer
+                startDate={contest.startTime}
+            />
+        );
+    }
+
+    if (status === 'FINISHED') {
+        return <p>Competição encerrada</p>;
+    }
 
     return (
         <Page className='gap-3'>
