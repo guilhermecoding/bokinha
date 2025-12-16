@@ -46,12 +46,12 @@ export default async function ContestPage({
     return (
         <Page className='gap-3'>
             <Section>
-                <BoxContainer className='flex justify-between items-center rounded-3xl'>
+                <BoxContainer className='flex max-[1170px]:flex-col justify-between items-center max-[1170px]:gap-4 max-[1170px]:text-center rounded-3xl'>
                     <GreetingUser firstName={firstName} contestName={contest?.name} />
                     <TimeContest startTime={contest?.startTime} endTime={contest?.endTime} />
                 </BoxContainer>
             </Section>
-            <Section className='flex gap-3'>
+            <Section className='flex gap-3 flex-row max-[1170px]:flex-col'>
                 <div className='min-w-9/12'>
                     <ContainerQuestions contestId={contest?.id} />
                 </div>
