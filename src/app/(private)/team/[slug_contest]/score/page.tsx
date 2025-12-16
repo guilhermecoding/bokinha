@@ -1,4 +1,10 @@
 import ScoreboardPage from '@/components/ScoreboardPage/ScoreBoardPage';
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'BOKINHA - Placar',
+  description: 'Placar detalhado do contest.',
+};
 
 export default async function TeamScoreboardPage({
   params

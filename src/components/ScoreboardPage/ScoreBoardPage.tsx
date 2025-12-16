@@ -2,8 +2,6 @@ import Page from '@/components/Page';
 import Section from '@/components/Section';
 import Scoreboard from './_components/Scoreboard';
 import prisma from '@/lib/prisma';
-import { getServerSession, Session } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import { notFound } from 'next/navigation';
 import { Metadata } from 'next';
 
