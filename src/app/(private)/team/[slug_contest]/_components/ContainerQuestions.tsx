@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import BoxContainer from '@/components/BoxContainer';
 import CardQuestion from './CardQuestion';
 import axios from 'axios';
