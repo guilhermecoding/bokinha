@@ -14,6 +14,7 @@ import {
 import axios from 'axios';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import conffets from '@/components/conffets';
+import { Spinner } from '@/components/ui/spinner';
 
 type Question = {
   id: string;
@@ -143,6 +144,14 @@ export default function CardQuestion({
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  if (!loading && password.trim()) {
+                    void handleConfirm();
+                  }
+                }
+              }}
               className="w-full rounded-md border px-3 py-2"
               placeholder="Senha de admin"
               autoFocus
@@ -151,11 +160,22 @@ export default function CardQuestion({
           </div>
 
           <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)} disabled={loading}>
+            <Button variant="outline" className='cursor-pointer' onClick={() => setOpen(false)} disabled={loading}>
               Cancelar
             </Button>
-            <Button onClick={handleConfirm} disabled={loading || !password.trim()}>
-              {loading ? 'Confirmando...' : 'Confirmar'}
+            <Button className='bg-green-500 hover:bg-green-600 cursor-pointer' onClick={handleConfirm} disabled={loading || !password.trim()}>
+              {loading ? (
+                <>
+                  <Spinner />
+                  <span>
+                    Confirmando...
+                  </span>
+                </>
+                ) : (
+                <span>
+                  Confirmar
+                </span>
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
