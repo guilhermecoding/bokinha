@@ -1,23 +1,43 @@
 import Page from '@/components/Page';
-import { getContest } from './layout';
 import Section from '@/components/Section';
 import BoxContainer from '@/components/BoxContainer';
 import TimeContest from './_components/TimeContest';
-import messageHour from '@/lib/message-hour';
 import ContainerQuestions from './_components/ContainerQuestions';
 import ContainerScoreboard from './_components/ContainerScoreboard';
 import { getServerSession } from 'next-auth/next';
 import { Session } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+import GreetingUser from './_components/GreetingUser';
+import { notFound } from 'next/navigation';
+import prisma from '@/lib/prisma';
 
 export default async function ContestPage({
     params
 }:{
     params: Promise<{ slug_contest: string }>
 }) {
-    const { slug_contest } =  await params;
-    const contest = await getContest(slug_contest); // Obtendo dados da competição pelo ID
-    const session: Session | null = await getServerSession(authOptions); // Obtendo dados do usuário logado
+    const { slug_contest: slugContest } =  await params;
+
+    let contest;
+    try {
+        contest = await prisma.contest.findUnique({
+            where: { slug: slugContest },
+            select: { 
+                id: true,
+                name: true,
+                startTime: true,
+                endTime: true
+             }
+        });
+    } catch (err) {
+        throw new Error(`Erro ao buscar contest: ${err}`);
+    }
+
+    if (!contest) {
+        notFound();
+    }
+
+    const session: Session | null = await getServerSession(authOptions);
 
     // pega apenas o primeiro nome para a saudação
     const fullName = session?.user?.name ?? '';
@@ -26,21 +46,17 @@ export default async function ContestPage({
     return (
         <Page className='gap-3'>
             <Section>
-                <BoxContainer className='flex justify-between items-center rounded-3xl'>
-                    <div>
-                        <h1 className='font-medium text-3xl'>{messageHour(new Date().getHours())}, {firstName}!</h1>
-                        <h3 className='text-xl text-muted-foreground'>{contest?.name}</h3>
-                    </div>
-
+                <BoxContainer className='flex max-[1170px]:flex-col justify-between items-center max-[1170px]:gap-4 max-[1170px]:text-center rounded-3xl'>
+                    <GreetingUser firstName={firstName} contestName={contest?.name} />
                     <TimeContest startTime={contest?.startTime} endTime={contest?.endTime} />
                 </BoxContainer>
             </Section>
-            <Section className='flex gap-3'>
+            <Section className='flex gap-3 flex-row max-[1170px]:flex-col'>
                 <div className='min-w-9/12'>
                     <ContainerQuestions contestId={contest?.id} />
                 </div>
                 <div className='w-full'>
-                    <ContainerScoreboard contestId={contest?.id} slug={slug_contest} />   
+                    <ContainerScoreboard contestId={contest?.id} slug={slugContest} />   
                 </div>
             </Section>
         </Page>

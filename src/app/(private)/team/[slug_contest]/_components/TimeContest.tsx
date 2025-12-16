@@ -1,6 +1,5 @@
 'use client';
 
-import Logo from '@/components/Logo';
 import { useEffect, useState } from 'react';
 
 export default function TimeContest({

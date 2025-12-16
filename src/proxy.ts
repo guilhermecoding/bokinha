@@ -1,13 +1,14 @@
 import { withAuth } from 'next-auth/middleware';
 import { NextResponse } from 'next/server';
 import { getToken } from 'next-auth/jwt';
+import { Role } from '../generated/prisma/enums';
 
 export default withAuth(
   async function middleware(req) {
     const path = req.nextUrl.pathname;
 
     // 1️⃣ Rotas públicas que não precisam de autenticação
-    const publicPaths = ['/placar', '/', '/login'];
+    const publicPaths = ['/', '/login'];
     if (publicPaths.some(p => path === p)) {
       return NextResponse.next();
     }
@@ -18,14 +19,14 @@ export default withAuth(
       if (!token) return NextResponse.next();
 
       // 2️⃣ Redireciona ADMIN para /admin se não estiver lá
-      if (token.role === 'ADMIN' && !path.startsWith('/admin')) {
+      if (token.role === Role.ADMIN && !path.startsWith('/admin')) {
         const url = req.nextUrl.clone();
         url.pathname = '/admin';
         return NextResponse.redirect(url);
       }
 
       // 3️⃣ Redireciona STUDENT para /team/{slug} se não estiver lá
-      if (token.role !== 'ADMIN' && !path.startsWith('/team')) {
+      if (token.role !== Role.ADMIN && !path.startsWith('/team')) {
         const url = req.nextUrl.clone();
         url.pathname = `/team/${token.contestSlug}`;
         return NextResponse.redirect(url);
@@ -50,12 +51,12 @@ export default withAuth(
 
         // ADMIN só para /admin
         if (path.startsWith('/admin')) {
-          return isLoggedIn && token?.role === 'ADMIN';
+          return isLoggedIn && token?.role === Role.ADMIN;
         }
 
         // STUDENT só para /team
         if (path.startsWith('/team')) {
-          return isLoggedIn && token?.role !== 'ADMIN';
+          return isLoggedIn && token?.role !== Role.ADMIN;
         }
 
         // Demais rotas precisam estar logadas
