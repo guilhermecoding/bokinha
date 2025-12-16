@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { Spinner } from '@/components/ui/spinner';
+import { Role } from '../../../../generated/prisma/enums';
 
 // ---------------------
 // VALIDATION
@@ -72,7 +73,7 @@ export default function LoginPage() {
       const session = await response.json();
 
       // ✅ Redireciona baseado no role
-      if (session?.user?.role === 'ADMIN') {
+      if (session?.user?.role === Role.ADMIN) {
         router.push('/admin');
       } else if (session?.user?.contestSlug) {
         router.push(`/team/${session.user.contestSlug}`);
