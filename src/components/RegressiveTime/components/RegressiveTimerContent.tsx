@@ -1,4 +1,5 @@
 'use client';
+
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
 
@@ -185,9 +186,9 @@ function ElementTimer({
                 value={value > displayMax && label === 'day' ? displayMax : value} // Garante que o valor não exceda o max visualmente para a barra
                 gaugePrimaryColor="rgb(255, 255, 255)"
                 gaugeSecondaryColor="rgba(0, 0, 0, 0.1)"
-                className="w-15 h-15"
+                className="w-14 h-14 sm:w-24 sm:h-24 text-xl sm:text-3xl"
             />
-            <span>
+            <span className='text-md sm:text-xl'>
                 {value === 1 ? labelsType[label].singular : labelsType[label].plural}
             </span>
         </div>
@@ -239,11 +240,11 @@ export default function RegressiveTimerContent({ startDate, onTimeExpired }: Reg
   return (
     <div className="flex flex-row gap-2">
       <ElementTimer value={timeLeft.days} label="day" />
-      <span className="text-2xl font-bold mt-2">:</span>
+      <span className="text-2xl sm:text-4xl font-bold mt-3 sm:mt-6">:</span>
       <ElementTimer value={timeLeft.hours} label="hour" />
-      <span className="text-2xl font-bold mt-2">:</span>
+      <span className="text-2xl sm:text-4xl font-bold mt-3 sm:mt-6">:</span>
       <ElementTimer value={timeLeft.minutes} label="minute" />
-      <span className="text-2xl font-bold mt-2">:</span>
+      <span className="text-2xl sm:text-4xl font-bold mt-3 sm:mt-6">:</span>
       <ElementTimer value={timeLeft.seconds} label="second" />
     </div>
   );

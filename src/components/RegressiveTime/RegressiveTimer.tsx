@@ -1,19 +1,16 @@
 'use client';
 
-import RegressiveTimerContent from './components/RegressiveTimerContent';
-import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
+
+const RegressiveTimerClient = dynamic(
+    () => import('./components/RegressiveTimerClient'),
+    { ssr: false }
+);
 
 export default function RegressiveTimer({
     startDate
 }: {
     startDate: Date
 }) {
-    const router = useRouter();
-
-    return (
-        <RegressiveTimerContent 
-            startDate={startDate}
-            onTimeExpired={() => router.refresh()}
-        />
-    );
+    return <RegressiveTimerClient startDate={startDate} />;
 }

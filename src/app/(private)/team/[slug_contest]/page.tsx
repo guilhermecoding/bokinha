@@ -59,7 +59,15 @@ export default async function ContestPage({
     }
 
     if (status === 'FINISHED') {
-        return <p>Competição encerrada</p>;
+        return (
+            <Page>
+                <Section className='h-[80vh] flex justify-center items-center'>
+                    <h1 className='font-bold text-muted-foreground text-3xl'>
+                        Competição Finalizada
+                    </h1>
+                </Section>
+            </Page>
+        );
     }
 
     return (
