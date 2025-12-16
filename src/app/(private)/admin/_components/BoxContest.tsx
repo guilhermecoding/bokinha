@@ -316,7 +316,7 @@ export default function BoxContest() {
                                             <Button
                                               variant='ghost'
                                               title="Visualizar"
-                                              onClick={() => router.push(`/admin/competicoes/${contest.slug}`)} // navega para a rota desejada
+                                              onClick={() => router.push(`/admin/contest/${contest.slug}`)}
                                             >
                                                 <IconEyeFilled />
                                             </Button>

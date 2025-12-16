@@ -6,7 +6,7 @@ import slugify from '@/schemas/slugify.schema';
 import { Prisma } from '../../../../../generated/prisma/client';
 
 export async function DELETE(
-  request: Request,
+  req: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const { id } = await params;

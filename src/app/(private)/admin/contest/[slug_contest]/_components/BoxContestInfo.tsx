@@ -123,7 +123,7 @@ export default function BoxContestInfo({
           <div><strong>Criado em:</strong> {new Date(contest.createdAt).toLocaleString()}</div>
           <div><strong>Última atualização:</strong> {new Date(contest.updatedAt).toLocaleString()}</div>
           <div>
-            <Link className='flex items-center gap-1 text-blue-500 hover:text-blue-700' href={`/placar/${contest.slug}`} target='_blank' rel='noopener noreferrer'>
+            <Link className='flex items-center gap-1 text-blue-500 hover:text-blue-700' href={`/admin/contest/${contest.slug}/score`} target='_blank' rel='noopener noreferrer'>
               <IconExternalLink className='w-5 h-5' /> Conferir Placar
             </Link>
           </div>

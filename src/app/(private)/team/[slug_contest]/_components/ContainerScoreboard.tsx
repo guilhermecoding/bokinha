@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import BoxContainer from '@/components/BoxContainer';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
@@ -47,11 +46,11 @@ export default function ContainerScoreboard({
   return (
     <BoxContainer className='w-full rounded-3xl flex flex-col'>
       <div className='w-full flex flex-col gap-2 justify-between items-center px-4 py-2'>
-        <Link className='text-muted-foreground text-lg flex items-center' href={`/placar/${slug}`} target='_blank' rel='noopener noreferrer'>
+        <Link className='text-muted-foreground text-lg flex items-center' href={`/team/${slug}/score`} target='_blank' rel='noopener noreferrer'>
           Placar
           <IconExternalLink className="ml-2 w-5 h-5" />
         </Link>
-        <span className='text-sm text-muted-foreground'>{isFetching ? 'Atualizando…' : ''}</span>
+        <span className={`text-sm text-muted-foreground ${isFetching ? 'visible' : 'invisible'}`}>Atualizando…</span>
       </div>
 
       {/* área scrollable com altura máxima */}

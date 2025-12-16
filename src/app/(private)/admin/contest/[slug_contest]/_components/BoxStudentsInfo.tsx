@@ -85,7 +85,7 @@ function DialogAddStudent({ open, setOpen, defaultContestId }: {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Adicionar Participante</DialogTitle>
-          <DialogDescription className="sr-only">Formulário para cadastrar novo estudante</DialogDescription>
+          <DialogDescription className="sr-only">Formulário para cadastrar novos participantes</DialogDescription>
         </DialogHeader>
 
         <Form {...form}>
@@ -274,7 +274,7 @@ export default function BoxStudentsInfo({
       <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex flex-row items-center gap-2">
           <IconUserFilled className="w-5 h-5 sm:w-6 sm:h-6" />
-          <h2 className="font-bold text-xl sm:text-2xl">Alunos Participantes</h2>
+          <h2 className="font-bold text-xl sm:text-2xl">Participantes</h2>
         </div>
         <Button
           variant="default"

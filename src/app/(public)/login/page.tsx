@@ -18,6 +18,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import { Spinner } from '@/components/ui/spinner';
 
 // ---------------------
 // VALIDATION
@@ -31,7 +32,7 @@ type LoginInput = z.infer<typeof loginSchema>;
 // ---------------------
 // COMPONENTE
 // ---------------------
-export default function Home() {
+export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -45,7 +46,7 @@ export default function Home() {
   });
 
   // ---------------------
-  // SUBMIT DO LOGIN REAL
+  // SUBMIT DO LOGIN
   // ---------------------
   async function onSubmit(values: LoginInput) {
     setLoading(true);
@@ -53,7 +54,7 @@ export default function Home() {
       const result = await signIn('credentials', {
         email: values.email,
         password: values.password,
-        redirect: false, // evita redirect automático
+        redirect: false,
       });
 
       if (result?.error) {
@@ -66,7 +67,21 @@ export default function Home() {
         return;
       }
 
-      router.push('/');
+      // ✅ Busca a sessão atualizada para obter o role
+      const response = await fetch('/api/auth/session');
+      const session = await response.json();
+
+      // ✅ Redireciona baseado no role
+      if (session?.user?.role === 'ADMIN') {
+        router.push('/admin');
+      } else if (session?.user?.contestSlug) {
+        router.push(`/team/${session.user.contestSlug}`);
+      } else {
+        router.push('/');
+      }
+      
+      // ✅ Force refresh para garantir que o middleware pegue o token
+      router.refresh();
     } finally {
       setLoading(false);
     }
@@ -140,11 +155,8 @@ export default function Home() {
                   aria-busy={loading}
                 >
                   {loading ? (
-                    <span className="inline-flex items-center">
-                      <svg className="animate-spin mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
-                      </svg>
+                    <span className="inline-flex gap-2 items-center">
+                      <Spinner />
                       Entrando...
                     </span>
                   ) : (

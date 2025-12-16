@@ -1,11 +1,10 @@
 'use client';
 
-import React from 'react';
 import BoxContainer from '@/components/BoxContainer';
 import CardQuestion from './CardQuestion';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
-import { Question } from '../../../../../generated/prisma/client';
+import { Question } from '../../../../../../generated/prisma/client';
 
 export default function ContainerQuestions({ 
   contestId 
