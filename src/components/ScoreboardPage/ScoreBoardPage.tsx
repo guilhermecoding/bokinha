@@ -12,17 +12,16 @@ export const metadata: Metadata = {
   description: 'Placar detalhado do contest.',
 };
 
-export default async function ScoreboardPage() {
-  const currentSession: Session | null = await getServerSession(authOptions);
-
-  if (!currentSession?.user.contestSlug) {
-    throw new Error('No contest slug found in session');
-  }
+export default async function ScoreboardPage({
+  slugContest
+}: {
+  slugContest: string
+}) {
 
   let contest;
   try {
     contest = await prisma.contest.findUnique({ 
-      where: { slug: currentSession.user.contestSlug },
+      where: { slug: slugContest },
       select: {
         id: true,
         name: true,

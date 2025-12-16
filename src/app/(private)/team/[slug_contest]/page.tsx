@@ -1,5 +1,4 @@
 import Page from '@/components/Page';
-import { getContest } from './layout';
 import Section from '@/components/Section';
 import BoxContainer from '@/components/BoxContainer';
 import TimeContest from './_components/TimeContest';
@@ -9,15 +8,36 @@ import { getServerSession } from 'next-auth/next';
 import { Session } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
 import GreetingUser from './_components/GreetingUser';
+import { notFound } from 'next/navigation';
+import prisma from '@/lib/prisma';
 
 export default async function ContestPage({
     params
 }:{
     params: Promise<{ slug_contest: string }>
 }) {
-    const { slug_contest } =  await params;
-    const contest = await getContest(slug_contest); // Obtendo dados da competição pelo ID
-    const session: Session | null = await getServerSession(authOptions); // Obtendo dados do usuário logado
+    const { slug_contest: slugContest } =  await params;
+
+    let contest;
+    try {
+        contest = await prisma.contest.findUnique({
+            where: { slug: slugContest },
+            select: { 
+                id: true,
+                name: true,
+                startTime: true,
+                endTime: true
+             }
+        });
+    } catch (err) {
+        throw new Error(`Erro ao buscar contest: ${err}`);
+    }
+
+    if (!contest) {
+        notFound();
+    }
+
+    const session: Session | null = await getServerSession(authOptions);
 
     // pega apenas o primeiro nome para a saudação
     const fullName = session?.user?.name ?? '';
@@ -36,7 +56,7 @@ export default async function ContestPage({
                     <ContainerQuestions contestId={contest?.id} />
                 </div>
                 <div className='w-full'>
-                    <ContainerScoreboard contestId={contest?.id} slug={slug_contest} />   
+                    <ContainerScoreboard contestId={contest?.id} slug={slugContest} />   
                 </div>
             </Section>
         </Page>
