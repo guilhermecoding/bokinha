@@ -5,6 +5,7 @@ import z from 'zod';
 import slugify from '@/schemas/slugify.schema';
 import {Prisma} from '../../../../../generated/prisma/client';
 import log from '@/lib/log';
+import bcrypt from 'bcryptjs';
 
 const APP_NAME = 'contests-id-api';
 
@@ -111,12 +112,14 @@ export async function PATCH(
 
         log(APP_NAME, 'INFO', 'Atualizando competição no banco de dados', {id, slug});
 
+        const adminPasswordHashed = await bcrypt.hash(adminPassword, 10);
+
         const updated = await prisma.contest.update({
             where: {id},
             data: {
                 name,
                 slug,
-                adminPassword,
+                adminPassword: adminPasswordHashed,
                 startTime: start,
                 endTime: end,
             },
