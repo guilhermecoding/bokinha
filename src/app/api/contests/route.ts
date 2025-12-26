@@ -4,6 +4,7 @@ import createContestSchema from '@/schemas/create-contest.schema';
 import {ZodError} from 'zod';
 import slugify from '@/schemas/slugify.schema';
 import log from '@/lib/log';
+import bcrypt from 'bcryptjs';
 
 const APP_NAME = 'contests-api';
 
@@ -80,10 +81,12 @@ export async function POST(req: Request) {
 
         log(APP_NAME, 'INFO', 'Criando competição no banco de dados', {name, slug});
 
+        const adminPasswordHashed = await bcrypt.hash(adminPassword, 10);
+
         const contest = await prisma.contest.create({
             data: {
                 name,
-                adminPassword,
+                adminPassword: adminPasswordHashed,
                 slug,
                 startTime: start,
                 endTime: end,
