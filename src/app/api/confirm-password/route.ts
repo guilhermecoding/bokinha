@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         return NextResponse.json({error: 'Not authenticated'}, {status: 401});
     }
 
-    log(APP_NAME, 'INFO', 'Usuário autenticado', {email: session.user.email});
+    log(APP_NAME, 'INFO', 'Usuário autenticado', {userId: session.user.id});
 
     const {password} = await req.json();
 
@@ -33,20 +33,31 @@ export async function POST(req: Request) {
     });
 
     if (!user) {
-        log(APP_NAME, 'ERROR', 'Usuário não encontrado', {email: session.user.email});
+        log(APP_NAME, 'ERROR', 'Usuário não encontrado', {userId: session.user.id});
         return NextResponse.json({error: 'User not found'}, {status: 404});
     }
 
-    log(APP_NAME, 'INFO', 'Validando senha...', {email: session.user.email});
+    log(APP_NAME, 'INFO', 'Buscando competição ao qual o usuário está ativo', {userId: session.user.id});
 
-    const isValid = await compare(password, user.password);
+    const contest = await prisma.contest.findUnique({
+        where: {slug: session.user.contestSlug}
+    });
+
+    if (!contest) {
+        log(APP_NAME, 'ERROR', 'Competição não encontrada', {userId: session.user.id});
+        return NextResponse.json({error: 'Contest not found'}, {status: 404});
+    }
+
+    log(APP_NAME, 'INFO', 'Validando senha', {userId: session.user.id});
+
+    const isValid = await compare(password, contest.adminPassword);
 
     if (!isValid) {
-        log(APP_NAME, 'ERROR', 'Senha inválida', {email: session.user.email});
+        log(APP_NAME, 'ERROR', 'Senha inválida', {userId: session.user.id});
         return NextResponse.json({valid: false}, {status: 401});
     }
 
-    log(APP_NAME, 'INFO', 'Senha confirmada com sucesso', {email: session.user.email});
+    log(APP_NAME, 'INFO', 'Senha confirmada com sucesso', {userId: session.user.id});
 
     return NextResponse.json({valid: true});
 }

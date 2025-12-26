@@ -18,7 +18,7 @@ export default async function ContestPage({
 }) {
     const {slug_contest: slugContest} = await params;
 
-    // busca minimal para checar existência
+    // Busca minima para checar existência
     const contest = await prisma.contest.findUnique({
         where: {slug: slugContest},
         select: {id: true, name: true, slug: true},
