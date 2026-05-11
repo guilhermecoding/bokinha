@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # --- SERVIÇO 1: O SITE (NEXT.JS) ---
   app:
@@ -8,32 +6,15 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
-      # AQUI ESTÁ O SEGREDO: O host do banco é 'db', não 'localhost'
-      - DATABASE_URL=postgresql://boquinha:uhcc25@db:5432/boquinha
-      # Suas chaves de segurança (auth)
-      - AUTH_SECRET=marcelino
-      - NEXTAUTH_SECRET=marcelino
-      # URL pública (Troque pelo IP Externo da VPS quando souber)
-      - NEXTAUTH_URL=http://34.57.93.40:3000
+      # Na rede Docker o host da base de dados é o serviço `db` (substitui DATABASE_URL do .env)
+      DATABASE_URL: postgresql://boquinha:uhcc25@db:5432/bokinha
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET:?Defina NEXTAUTH_SECRET no ficheiro .env}
+      NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
+      AUTH_SECRET: ${NEXTAUTH_SECRET}
     depends_on:
       - db
     # Comando para garantir que as migrações rodem antes de iniciar o site (Opcional, mas recomendado)
     # command: sh -c "npx prisma db push && node server.js"
-
-  # --- SERVIÇO 2: O BANCO (POSTGRES) ---
-  db:
-    container_name: boquinha_db
-    image: postgres:15-alpine
-    restart: always
-    environment:
-      POSTGRES_USER: boquinha
-      POSTGRES_PASSWORD: 
-      POSTGRES_DB: boquinha
-    volumes:
-      # Isso garante que os dados NÃO SUMAM se reiniciar a VPS
-      - postgres_data:/var/lib/postgresql/data
-
-# Volume persistente
-volumes:
-  postgres_data:
