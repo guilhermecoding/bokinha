@@ -7,102 +7,63 @@ datasource db {
   provider = "postgresql"
 }
 
-// =========================================================
-// 1. ENUMS
-// =========================================================
-
-enum Role {
-  ADMIN
-  STUDENT
-}
-
-// =========================================================
-// 2. USUÁRIOS (Admin e Estudantes)
-// =========================================================
-
 model User {
-  id       String @id @default(cuid())
-  name     String
-  email    String @unique
-  password String
-  role     Role   @default(STUDENT)
-
-  schoolClass String? @map("school_class")
-  age         Int?
-
-  contestId String?  @map("contest_id")
-  // adiciona onDelete: Cascade para apagar users quando a contest for apagada
-  contest   Contest? @relation(fields: [contestId], references: [id], onDelete: Cascade)
-
+  id              String           @id @default(cuid())
+  name            String
+  email           String           @unique
+  password        String
+  role            Role             @default(STUDENT)
+  schoolClass     String?          @map("school_class")
+  age             Int?
+  contestId       String?          @map("contest_id")
+  createdAt       DateTime         @default(now()) @map("created_at")
+  updatedAt       DateTime         @updatedAt @map("updated_at")
   solvedQuestions SolvedQuestion[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  contest         Contest?         @relation(fields: [contestId], references: [id], onDelete: Cascade)
 
   @@map("users")
 }
 
-// =========================================================
-// 3. A COMPETIÇÃO
-// =========================================================
-
 model Contest {
-  id   String @id @default(cuid())
-  name String // Ex: "Maratona 2025"
-  slug String @unique // Para URL: /contest/maratona-2025
-
-  // Controle de Tempo e Acesso
-  adminPassword String   @map("admin_password") // Senha que o prof digita na tela do aluno
-  startTime     DateTime @map("start_time")
-  endTime       DateTime @map("end_time")
-
-  // Relacionamentos
-  users     User[]
-  questions Question[]
-
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  id            String     @id @default(cuid())
+  name          String
+  slug          String     @unique
+  adminPassword String     @map("admin_password")
+  startTime     DateTime   @map("start_time")
+  endTime       DateTime   @map("end_time")
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+  questions     Question[]
+  users         User[]
 
   @@map("contests")
 }
 
-// =========================================================
-// 4. AS QUESTÕES
-// =========================================================
-
 model Question {
-  id           String @id @default(cuid())
+  id           String           @id @default(cuid())
   title        String
-  order        Int    @default(0)
-  balloonColor String @default("#ffffff") @map("balloon_color") // Hex Code
-
-  contestId String  @map("contest_id")
-  contest   Contest @relation(fields: [contestId], references: [id], onDelete: Cascade)
-
-  solvedBy SolvedQuestion[]
+  order        Int              @default(0)
+  balloonColor String           @default("#ffffff") @map("balloon_color")
+  contestId    String           @map("contest_id")
+  contest      Contest          @relation(fields: [contestId], references: [id], onDelete: Cascade)
+  solvedBy     SolvedQuestion[]
 
   @@map("questions")
 }
 
-// =========================================================
-// 5. REGISTRO DE ACERTOS (Tabela Pivô)
-// =========================================================
-
 model SolvedQuestion {
-  id String @id @default(cuid())
-
-  // Ouro: O horário exato do acerto para desempate
-  solvedAt DateTime @default(now()) @map("solved_at")
-
-  // Quem acertou? (Agora aponta para User)
-  userId String @map("user_id")
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  // Qual questão?
+  id         String   @id @default(cuid())
+  solvedAt   DateTime @default(now()) @map("solved_at")
+  userId     String   @map("user_id")
   questionId String   @map("question_id")
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Regra: Um usuário só pode ter UM registro de acerto para cada questão
   @@unique([userId, questionId])
   @@map("solved_questions")
+}
+
+enum Role {
+  ADMIN
+  STUDENT
 }
