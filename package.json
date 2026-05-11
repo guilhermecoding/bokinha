@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "postinstall": "prisma generate",
+    "build": "prisma migrate deploy && next build",
     "build:prod": "NEXT_PUBLIC_BUILD_ENV=production next build",
     "start": "next start",
     "lint": "eslint",
@@ -49,6 +50,7 @@
     "@typescript-eslint/eslint-plugin": "^8.48.0",
     "@typescript-eslint/parser": "^8.48.0",
     "babel-plugin-react-compiler": "1.0.0",
+    "baseline-browser-mapping": "^2.10.29",
     "eslint": "^9",
     "eslint-config-next": "16.0.6",
     "husky": "^9.1.7",
