@@ -5,4 +5,7 @@ npm-debug.log
 README.md
 .next
 .git
-.env*
+# Environment / secrets — não incluir no contexto do build (usar env no compose/runtime)
+.env
+.env.*
+*.env
